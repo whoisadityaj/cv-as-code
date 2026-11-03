@@ -165,6 +165,17 @@ def get_theme(name: str) -> Theme:
     return THEMES[name]
 
 
+def _tint(colour: str, amount: float = 0.6) -> str | None:
+    """Mix a hex colour with white, e.g. a light version of the accent for dark panels."""
+    hexpart = colour.lstrip("#")
+    if len(hexpart) == 3:
+        hexpart = "".join(c * 2 for c in hexpart)
+    if not colour.startswith("#") or len(hexpart) != 6:
+        return None  # named colours keep the theme's default light accent
+    rgb = [int(hexpart[i : i + 2], 16) for i in (0, 2, 4)]
+    return "#" + "".join(f"{round(c + (255 - c) * amount):02x}" for c in rgb)
+
+
 def _band(page: str, colour: str, width: str) -> str:
     # WeasyPrint doesn't resolve var() inside @page, so the band gets the literal colour.
     # The page paints it edge to edge; root and column backgrounds must stay transparent.
@@ -183,7 +194,8 @@ def stylesheet(theme: str, ats: bool, accent: str | None, kind: str = "cv") -> s
     if accent:
         if not re.fullmatch(r"#[0-9a-fA-F]{3,8}|[a-zA-Z]+", str(accent)):
             raise ValueError(f"accent must be a hex colour like #2563eb, got {accent!r}")
-        css.append(f":root {{ --accent: {accent}; }}")
+        soft = _tint(str(accent))
+        css.append(f":root {{ --accent: {accent};{f' --accent-soft: {soft};' if soft else ''} }}")
     colour = accent or spec.accent
     if not ats and kind == "cv" and spec.cv_band:
         css.append(_band("@page", colour, "34%"))

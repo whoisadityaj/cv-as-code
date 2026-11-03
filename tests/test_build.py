@@ -92,3 +92,9 @@ def test_examples_render_to_one_page_pdfs(tmp_path, theme, ats):
         html, pdf = written[0], [p for p in written if p.suffix == ".pdf"]
         assert pdf and pdf[0].read_bytes().startswith(b"%PDF"), f"no PDF for {name}"
         assert len(HTML(filename=str(html)).render().pages) == 1, f"{name} is not one page"
+
+
+def test_custom_accent_also_sets_a_light_accent(cv):
+    cv["accent"] = "#9b1b30"
+    html = render(cv, "cv", theme="sidebar", base_dir=EXAMPLES)
+    assert "--accent: #9b1b30; --accent-soft: #d7a4ac;" in html
