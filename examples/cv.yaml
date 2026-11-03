@@ -11,8 +11,11 @@ contact:
   github: https://github.com/example
   location: Austin, TX
 
-# Optional. Pick a look: classic (default), modern, or compact.
+# Optional. Pick a look: classic (default), modern, compact, minimal,
+# or a photo theme: sidebar, executive, bold.
 theme: classic
+# Optional. Shown only by photo themes, never in ATS mode. Path is relative to this file.
+photo: jane.png
 # Optional. a4 (default), letter, legal, single, single-tall, single-short, or a CSS size.
 page: letter
 

@@ -3,6 +3,7 @@
 sender:
   name: Jane Doe
   tagline: Senior Backend Engineer
+  photo: jane.png   # shown only by photo themes
   links:
     - { label: jane.doe@example.com, url: "mailto:jane.doe@example.com", icon: "@" }
     - { label: example.com, url: "https://example.com", icon: "↗" }
