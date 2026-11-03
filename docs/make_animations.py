@@ -114,7 +114,7 @@ def banner() -> str:
   <rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="24" fill="none" stroke="{BORDER}"/>
 
   <text x="60" y="86" font-family="{MONO}" font-weight="700" font-size="46" fill="{TEXT}">cv<tspan fill="{BLUE}">-as-</tspan>code</text>
-  <text x="60" y="124" font-family="{SANS}" font-size="20" fill="{MUTED}">Write your CV once in YAML. Get a clean PDF. Tailor it to any job with AI, fact-checked.</text>
+  <text x="60" y="124" font-family="{SANS}" font-size="20" fill="{MUTED}">Your CV lives in YAML. Build a clean PDF. AI tailors the YAML to each job, fact-checked.</text>
 
   <rect x="60" y="170" width="560" height="262" rx="14" fill="{PANEL}" stroke="{BORDER}"/>
   <circle cx="82" cy="189" r="5" fill="#ff5f57"/><circle cx="100" cy="189" r="5" fill="#febc2e"/><circle cx="118" cy="189" r="5" fill="#28c840"/>

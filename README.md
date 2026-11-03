@@ -12,8 +12,9 @@
 <h1 align="center">cv-as-code</h1>
 
 <p align="center">
-  <b>Your CV as code.</b> Write it once in YAML, get a clean PDF,<br>
-  and tailor it to any job with AI, <b>without the AI making things up</b>.
+  <b>Your CV as code.</b> Keep your CV in a YAML file and build a clean PDF from it.<br>
+  For each job, AI rewrites the <b>YAML</b> to match the posting, and a fact check
+  makes sure it <b>never invents anything</b>.
 </p>
 
 <p align="center">
@@ -34,8 +35,8 @@
 - **YAML in, PDF out.** Plain text you can diff, review and keep in Git.
 - **3 themes + ATS mode.** Classic, modern and compact, plus a plain layout that
   applicant-tracking systems parse cleanly.
-- **AI tailoring with a fact check.** Rewords your CV and cover letter for a job description, then
-  flags any number, date, employer, school or skill that wasn't in your original.
+- **AI tailoring with a fact check.** AI edits your YAML (never the PDF) to fit a job description,
+  then cv-as-code flags any number, date, employer, school or skill that wasn't in your original.
 - **Runs in GitHub Actions.** Push your YAML, get fresh PDFs.
 
 ## Quickstart
@@ -82,6 +83,12 @@ cv-as-code build cv.yaml cover_letter.yaml --ats
 ```
 
 ## Tailor to a job with AI
+
+The AI never touches a PDF. It reads your YAML and the job post, and writes a new YAML:
+
+```text
+cv.yaml + job.md  ──AI──▶  tailored/acme/cv.yaml  ──fact check──▶  you review  ──build──▶  PDF
+```
 
 ```bash
 pip install "cv-as-code[ai] @ git+https://github.com/whoisadityaj/cv-as-code"
