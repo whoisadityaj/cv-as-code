@@ -1,0 +1,32 @@
+/* modern: sans-serif, left-aligned header, accent-coloured section titles,
+   coloured cover-letter sidebar. Set `accent:` in YAML to change the colour. */
+:root {
+  --accent: #2563eb;
+  --link: var(--accent);
+  --serif: var(--sans);
+  --base-size: 9.6pt;
+}
+.cv-header { text-align: left; border-left: 4px solid var(--accent); padding-left: 10px; margin-bottom: 10px; }
+.cv-header .name { font-size: 24pt; letter-spacing: -0.01em; }
+.cv-header .role-line { font-style: normal; color: var(--accent); font-weight: bold; }
+.cv-header .contact { text-align: left; color: #333; }
+.cv-header .contact .sep { color: #bbb; }
+.section h2 {
+  font-size: 9.5pt;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  border-bottom: 0;
+  margin-bottom: 4px;
+}
+.experience .entry { border-bottom-color: #eeeeee; }
+.entry .row1 .dates { color: #555; }
+.entry .accomplishments-label { text-decoration: none; color: #444; font-size: 8.8pt; text-transform: uppercase; letter-spacing: 0.06em; }
+.skills .group .label { font-style: normal; }
+
+.letter .sidebar { background: var(--accent); color: #ffffff; }
+.letter .sidebar .name-stack { color: #ffffff; font-weight: bold; font-size: 30pt; }
+.letter .sidebar .tagline { color: #ffffff; opacity: 0.85; }
+.letter .sidebar .links a,
+.letter .sidebar .links a .icon { color: #ffffff; }
+.letter .body-col { padding-left: 14mm; }
+/* The full-height sidebar colour is added by build.py (WeasyPrint can't use var() in @page). */
