@@ -255,6 +255,35 @@ draft: read the diff before you send anything.
 Options: `--provider anthropic|openai`, `--model NAME` (Anthropic defaults to Claude Sonnet; OpenAI
 needs a model name). Your CV and the job description are sent to the provider you choose.
 
+## 📁 Apply to many jobs from one folder
+
+Keep your CV in its own folder (or a private repo) and add a `cv-as-code.yaml` so you never type
+paths again:
+
+```yaml
+cv: data/cv.yaml
+letter: data/cover_letter.yaml
+output: output            # where `cv-as-code build` writes
+tailored: applications    # one folder per job
+build: true               # make the PDFs right after tailoring
+```
+
+```text
+my-cv/
+├── cv-as-code.yaml
+├── data/cv.yaml, data/cover_letter.yaml
+├── jds/acme-senior-sdet.md          ← paste each job post here
+└── applications/acme-senior-sdet/   ← tailored YAML + PDFs for that job
+```
+
+```bash
+cv-as-code build                           # your normal CV and cover letter
+cv-as-code tailor jds/acme-senior-sdet.md  # tailored copy in applications/acme-senior-sdet/
+```
+
+`tailor` prints the `diff` commands to review every change. Tip: commit the tailored YAML files so
+you always know what you sent to each company, and ignore the PDFs (you can rebuild them).
+
 ## 🚀 Build in GitHub Actions
 
 Keep your CV in a (private) repo and copy [`examples/github-workflow.yml`](examples/github-workflow.yml)
