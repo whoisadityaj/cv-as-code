@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>{{ data.name }} — CV</title>
+<meta name="author" content="{{ data.name }}" />
+{% if data.title %}<meta name="description" content="{{ data.title }}" />{% endif %}
+<style>{{ css | safe }}</style>
+{% if page_size %}<style>@page { size: {{ page_size }}; }</style>{% endif %}
+</head>
+<body>
+
+<header class="cv-header">
+  <h1 class="name">{{ data.name }}</h1>
+  {% if data.title %}<div class="role-line">{{ data.title }}</div>{% endif %}
+  <div class="contact">
+    {%- set c = data.contact or {} -%}
+    {%- set items = [] -%}
+    {%- if c.phone %}{% set _ = items.append({'text': c.phone}) %}{% endif -%}
+    {%- if c.email %}{% set _ = items.append({'href': 'mailto:' ~ c.email, 'text': c.email}) %}{% endif -%}
+    {%- for key, label in [('website', 'portfolio'), ('linkedin', 'linkedin'), ('github', 'github')] -%}
+      {%- set url = c[key] -%}
+      {%- if url -%}
+        {%- set href = url if url.startswith('http') else 'https://' ~ url -%}
+        {%- set _ = items.append({'href': href, 'text': (href | display_url) if ats else label}) -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if c.location %}{% set _ = items.append({'text': c.location}) %}{% endif -%}
+    {%- for it in items -%}
+      {%- if not loop.first %}{% if ats %} | {% else %}<span class="sep">●</span>{% endif %}{% endif -%}
+      {%- if it.href %}<a href="{{ it.href }}">{{ it.text }}</a>{% else %}<span>{{ it.text }}</span>{% endif -%}
+    {%- endfor %}
+  </div>
+</header>
+
+{% if data.summary %}
+<section class="cv-summary">{{ data.summary | md }}</section>
+{% endif %}
+
+{% if data.skills %}
+<section class="section skills">
+  <h2>Skills</h2>
+  {% for group in data.skills %}
+  <div class="group">
+    <span class="label">{{ group.group }}:</span>
+    <span class="items">
+      {%- for item in group['items'] -%}
+        {%- if item.bold or item.level -%}
+          <strong>{{ item.name | md }}</strong>
+        {%- else -%}
+          {{ item.name | md }}
+        {%- endif -%}
+        {%- if item.level %} <span class="level">({{ item.level }})</span>{% endif -%}
+        {%- if not loop.last %}, {% endif -%}
+      {%- endfor -%}.
+    </span>
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+
+{% if data.experience %}
+<section class="section experience">
+  <h2>Experience</h2>
+  {% for job in data.experience %}
+  <div class="entry">
+    <div class="row1">
+      <div class="role">{{ job.role | md }}</div>
+      <div class="dates">{{ job.start }} – {{ job.end }}</div>
+    </div>
+    <div class="row2">
+      <div class="company-line">
+        <span class="company">{{ job.company | md }}</span>{% if job.location %}<span class="separator"> | </span><span class="location">{{ job.location | md }}</span>{% endif %}
+      </div>
+    </div>
+    {% if job.intro %}<div class="intro">{{ job.intro | md }}</div>{% endif %}
+    {% if job.bullets %}
+    {% if (data.style or {}).get('show_accomplishments_label', true) %}
+    <span class="accomplishments-label">{{ job.accomplishments_label or "Key Accomplishments:" }}</span>
+    {% endif %}
+    <ul>
+      {% for b in job.bullets %}
+      <li>{{ (b.text if b is mapping else b) | md }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+
+{% if data.education %}
+<section class="section education">
+  <h2>Education</h2>
+  {% for ed in data.education %}
+  <div class="entry">
+    <div class="row1">
+      <div class="role"><strong>{{ ed.school }}</strong>{% if ed.degree %} <span class="degree-inline">| {{ ed.degree | md }}</span>{% endif %}{% if ed.extra %} <span class="extra-inline">| {{ ed.extra | md }}</span>{% endif %}</div>
+      <div class="dates">{{ ed.start }} – {{ ed.end }}</div>
+    </div>
+    {% if ed.bullets %}
+    {% if ed.bullets_label %}<span class="accomplishments-label">{{ ed.bullets_label }}</span>{% endif %}
+    <ul>
+      {% for b in ed.bullets %}
+      <li>{{ b | md }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+
+{% if data.projects %}
+<section class="section projects">
+  <h2>Projects</h2>
+  {% for p in data.projects %}
+  <div class="entry">
+    <div class="row1">
+      <div class="role">
+        <strong>{{ p.name }}</strong>
+        {% if p.stack %}<span class="stack"> | {{ p.stack }}</span>{% endif %}
+        {% if p.links %}{% for l in p.links %} <span class="links"> | {{ l.label }} <a href="{{ l.url }}">{{ l.url | replace('https://', '') | replace('http://', '') }}</a></span>{% endfor %}{% endif %}
+      </div>
+    </div>
+    {% if p.bullets %}
+    <ul>
+      {% for b in p.bullets %}<li>{{ b | md }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+
+{% if data.publications %}
+<section class="section">
+  <h2>Publications</h2>
+  <ul>
+    {% for pub in data.publications %}<li>{{ pub | md }}</li>{% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if data.awards %}
+<section class="section">
+  <h2>Awards</h2>
+  <ul>
+    {% for a in data.awards %}<li>{{ a | md }}</li>{% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if data.certifications %}
+<section class="section">
+  <h2>Certifications</h2>
+  <ul>
+    {% for c in data.certifications %}<li>{{ c | md }}</li>{% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+</body>
+</html>

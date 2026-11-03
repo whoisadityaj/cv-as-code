@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>{{ data.sender.name }} — Cover Letter</title>
+<meta name="author" content="{{ data.sender.name }}" />
+<style>{{ css | safe }}</style>
+{% if page_size %}<style>@page { size: {{ page_size }}; } @page cover-letter { size: {{ page_size }}; }</style>{% endif %}
+</head>
+<body>
+
+<div class="letter">
+
+  <aside class="sidebar">
+    <h1 class="name-stack">
+      {%- set parts = data.sender.name.split(' ', 1) -%}
+      <span class="first">{{ parts[0] }}</span>
+      {% if parts|length > 1 %}<span class="last">{{ parts[1] }}</span>{% endif %}
+    </h1>
+    {% if data.sender.tagline %}<div class="tagline">{{ data.sender.tagline }}</div>{% endif %}
+    {% if data.sender.links %}
+    <div class="links">
+      {% for l in data.sender.links %}
+        <a href="{{ l.url }}"><span class="icon">{{ l.icon or '•' }}</span><span class="text">{{ l.label }}</span></a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </aside>
+
+  <section class="body-col">
+    <div class="date">{{ rendered_date }}</div>
+
+    {% if data.recipient and (data.recipient.hiring_manager or data.recipient.company or data.recipient.team or data.recipient.address) %}
+    <div class="recipient">
+      {% if data.recipient.hiring_manager %}{{ data.recipient.hiring_manager }}<br/>{% endif %}
+      {% if data.recipient.team %}{{ data.recipient.team }}<br/>{% endif %}
+      {% if data.recipient.company %}{{ data.recipient.company }}<br/>{% endif %}
+      {% if data.recipient.address %}{{ data.recipient.address }}{% endif %}
+    </div>
+    {% endif %}
+
+    <div class="salutation">{{ rendered_salutation }}</div>
+
+    <div class="body">
+      {% for para in data.body %}{{ para | md_block }}{% endfor %}
+    </div>
+
+    <div class="signoff">
+      <p class="sig-line">{{ data.sign_off or "Sincerely," }}</p>
+      <p class="signature">{{ data.sender.name }}</p>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>
