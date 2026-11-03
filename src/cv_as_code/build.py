@@ -165,11 +165,16 @@ def render(
 ) -> str:
     """Render one document. CLI options (theme, ats) override the YAML settings."""
     ats = bool(data.get("ats")) if ats is None else ats
+    theme = theme or data.get("theme") or "classic"
     ctx: dict[str, Any] = {
         "data": data,
-        "css": stylesheet(theme or data.get("theme") or "classic", ats, data.get("accent")),
+        "css": stylesheet(theme, ats, data.get("accent")),
         "page_size": page_size or _page_size_for(data),
         "ats": ats,
+        "theme": theme,
+        "layout": "single",
+        "photo": None,
+        "stacked_contacts": False,
     }
     if kind == "cover_letter":
         raw_date = data.get("date") or "auto"
