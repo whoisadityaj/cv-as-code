@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import re
+from dataclasses import dataclass
 import sys
 from pathlib import Path
 from typing import Any
@@ -20,7 +21,6 @@ TEMPLATES = Path(__file__).parent / "templates"
 
 TEMPLATE_FOR = {"cv": "cv.html.jinja", "cover_letter": "cover_letter.html.jinja"}
 STEM_SUFFIX = {"cv": "CV", "cover_letter": "Cover_Letter"}
-MODERN_ACCENT = "#2563eb"  # keep in sync with themes/modern.css
 
 # Named page-size presets. "single*" give one tall page so the whole CV fits
 # without a page break — handy for PDFs that are only ever read on screen.
@@ -132,29 +132,58 @@ def _page_size_for(data: dict[str, Any]) -> str:
     return resolve_page_size(page)
 
 
+@dataclass(frozen=True)
+class Theme:
+    """What a theme needs beyond its CSS file (themes/<name>.css)."""
+
+    accent: str = "#d24f3a"  # default accent; keep in sync with the theme's CSS
+    layout: str = "single"  # "single" column or two-column "sidebar" CV
+    photo: bool = False  # show `photo:` if the YAML has one
+    cv_band: bool = False  # paint a full-height accent column on CV pages
+    letter_band: bool = False  # paint a full-height accent sidebar on cover letters
+
+
+THEMES: dict[str, Theme] = {
+    "classic": Theme(),
+    "compact": Theme(),
+    "modern": Theme(accent="#2563eb", letter_band=True),
+}
+
+
 def theme_names() -> list[str]:
-    return sorted(p.stem for p in (TEMPLATES / "themes").glob("*.css") if p.stem != "ats")
+    return sorted(THEMES)
 
 
-def stylesheet(theme: str, ats: bool, accent: str | None) -> str:
+def get_theme(name: str) -> Theme:
+    if name not in THEMES:
+        raise ValueError(f"unknown theme {name!r}; choose from {', '.join(theme_names())}")
+    return THEMES[name]
+
+
+def _band(page: str, colour: str, width: str) -> str:
+    # WeasyPrint doesn't resolve var() inside @page, so the band gets the literal colour.
+    # The page paints it edge to edge; root and column backgrounds must stay transparent.
+    return (
+        f"{page} {{ background: linear-gradient(90deg, {colour} {width}, #ffffff {width}); }}\n"
+        "html, body { background: transparent; }\n"
+        ".letter .sidebar, .sidebar-layout .side { background: transparent; }"
+    )
+
+
+def stylesheet(theme: str, ats: bool, accent: str | None, kind: str = "cv") -> str:
     """Base CSS + theme layer (+ ATS layer), with an optional accent colour."""
-    if theme not in theme_names():
-        raise ValueError(f"unknown theme {theme!r}; choose from {', '.join(theme_names())}")
+    spec = get_theme(theme)
     css = [(TEMPLATES / "style.css").read_text(encoding="utf-8")]
     css.append((TEMPLATES / "themes" / f"{theme}.css").read_text(encoding="utf-8"))
     if accent:
         if not re.fullmatch(r"#[0-9a-fA-F]{3,8}|[a-zA-Z]+", str(accent)):
             raise ValueError(f"accent must be a hex colour like #2563eb, got {accent!r}")
         css.append(f":root {{ --accent: {accent}; }}")
-    if theme == "modern" and not ats:
-        # WeasyPrint doesn't resolve var() inside @page, so paint the full-height
-        # sidebar with the literal colour.
-        colour = accent or MODERN_ACCENT
-        css.append(
-            f"@page cover-letter {{ background: linear-gradient(90deg, {colour} 33%, #ffffff 33%); }}\n"
-            "html, body { background: transparent; }\n"  # a root background would paint over the page
-            ".letter .sidebar { background: transparent; }"  # the page paints it, edge to edge
-        )
+    colour = accent or spec.accent
+    if not ats and kind == "cv" and spec.cv_band:
+        css.append(_band("@page", colour, "34%"))
+    if not ats and kind == "cover_letter" and spec.letter_band:
+        css.append(_band("@page cover-letter", colour, "33%"))
     if ats:
         css.append((TEMPLATES / "themes" / "ats.css").read_text(encoding="utf-8"))
     return "\n".join(css)
@@ -166,15 +195,17 @@ def render(
     """Render one document. CLI options (theme, ats) override the YAML settings."""
     ats = bool(data.get("ats")) if ats is None else ats
     theme = theme or data.get("theme") or "classic"
+    spec = get_theme(theme)
+    layout = "single" if ats else spec.layout
     ctx: dict[str, Any] = {
         "data": data,
-        "css": stylesheet(theme, ats, data.get("accent")),
+        "css": stylesheet(theme, ats, data.get("accent"), kind),
         "page_size": page_size or _page_size_for(data),
         "ats": ats,
         "theme": theme,
-        "layout": "single",
+        "layout": layout,
         "photo": None,
-        "stacked_contacts": False,
+        "stacked_contacts": layout == "sidebar",
     }
     if kind == "cover_letter":
         raw_date = data.get("date") or "auto"
