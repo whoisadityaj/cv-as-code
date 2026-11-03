@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+.DS_Store
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Your own CV data and outputs stay local
+output/
+tailored/
+my-cv/
