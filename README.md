@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <a href="#-quickstart">⚡ Quickstart</a> ·
+  <a href="#-step-by-step-guide">🧭 Step-by-step guide</a> ·
   <a href="#-themes">🎨 Themes</a> ·
   <a href="#-tailor-to-a-job-with-ai">🤖 AI tailoring</a> ·
   <a href="#-build-in-github-actions">🚀 GitHub Action</a>
@@ -41,23 +41,142 @@
   then cv-as-code flags any number, date, employer, school or skill that wasn't in your original.
 - 🚀 **Runs in GitHub Actions.** Push your YAML, get fresh PDFs.
 
-## ⚡ Quickstart
+## 🧭 Step-by-step guide
+
+No coding needed. You will edit one text file and run a few commands. It takes about 10 minutes.
+
+> **Already use Python?** `pip install https://github.com/whoisadityaj/cv-as-code/archive/refs/heads/main.zip`,
+> then `cv-as-code init` and `cv-as-code build cv.yaml`.
+
+### Step 1: Check that you have Python
+
+Open the **Terminal** app (Mac) or **PowerShell** (Windows) and type:
 
 ```bash
-pip install git+https://github.com/whoisadityaj/cv-as-code
-cv-as-code build examples/cv.yaml examples/cover_letter.yaml
-# -> output/Jane_Doe_CV.pdf, output/Jane_Doe_Cover_Letter.pdf
+python3 --version
 ```
 
-Then copy [`examples/cv.yaml`](examples/cv.yaml) and
-[`examples/cover_letter.yaml`](examples/cover_letter.yaml) and replace Jane with you.
-Text fields support inline Markdown (`**bold**`, `*italic*`, `[link](https://…)`).
+You need **3.10 or newer**. If you see an error or an older number, install Python from
+[python.org/downloads](https://www.python.org/downloads/). On Windows, tick **"Add Python to PATH"**
+during install, and use `python` instead of `python3` in the steps below.
 
-> **PDF needs Pango.** PDFs are rendered by [WeasyPrint](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html).
-> On macOS: `brew install pango` and, if Python can't find it,
-> `export DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib`. On Debian/Ubuntu:
-> `sudo apt install libpango-1.0-0 libpangoft2-1.0-0`. The HTML is always written, so you can
-> also open it in a browser and print to PDF.
+### Step 2: Install the PDF helper
+
+cv-as-code uses a free library called Pango to draw PDFs.
+
+- **Mac:** install [Homebrew](https://brew.sh), then run `brew install pango`
+- **Ubuntu / Debian:** `sudo apt install libpango-1.0-0 libpangoft2-1.0-0`
+- **Windows:** follow [WeasyPrint's Windows steps](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#windows)
+
+Can't get it working? Skip it. You will still get an HTML file that you can open in your browser
+and save as PDF with **Print → Save as PDF**.
+
+### Step 3: Install cv-as-code
+
+This creates a small private folder (`cv-env`) for the tool, so it doesn't touch anything else
+on your computer.
+
+```bash
+python3 -m venv cv-env
+source cv-env/bin/activate        # Windows: cv-env\Scripts\activate
+pip install https://github.com/whoisadityaj/cv-as-code/archive/refs/heads/main.zip
+```
+
+> Every time you open a new terminal, run the `activate` line again before using cv-as-code.
+
+### Step 4: Get the starter files
+
+```bash
+mkdir my-cv
+cd my-cv
+cv-as-code init
+```
+
+This gives you four files to start from: `cv.yaml` (your CV), `cover_letter.yaml`, `job.md`
+(a job post, for AI tailoring) and `jane.png` (a sample photo).
+
+### Step 5: Make your first PDF
+
+```bash
+cv-as-code build cv.yaml
+```
+
+Your PDF is now in the `output` folder. Open it:
+
+```bash
+open output/Jane_Doe_CV.pdf       # Windows: start output\Jane_Doe_CV.pdf
+```
+
+> **Mac: "PDF generation failed"?** Run `export DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib`
+> and try again (add that line to `~/.zshrc` so you never need to type it again).
+
+### Step 6: Put in your own details
+
+Open `cv.yaml` in any text editor (TextEdit in plain-text mode, Notepad or VS Code) and replace
+Jane's details with yours. A few simple rules:
+
+```yaml
+name: Your Name                  # "label: value", one per line
+title: Product Designer
+experience:
+  - role: Senior Designer        # a line starting with "-" is one item in a list
+    company: Your Company        # indent with 2 spaces, never with Tab
+    start: Jan 2022
+    end: Present
+    bullets:
+      - Led the redesign of the **checkout page**   # **text** makes it bold
+```
+
+- Keep the same structure as the example, and delete any section you don't need.
+- If a value has a `:` or `#` in it, put it in quotes: `title: "Lead: Platform"`.
+- Run `cv-as-code build cv.yaml` again after every change. The PDF is named after you
+  (for example `output/Your_Name_CV.pdf`).
+
+### Step 7: Pick a look
+
+Change the `theme:` line in `cv.yaml` (see [Themes](#-themes) below), or try one without editing:
+
+```bash
+cv-as-code build cv.yaml --theme sidebar
+```
+
+**Your photo:** put it in the `my-cv` folder and change the line to `photo: me.jpg`. Only the
+`sidebar`, `bold` and `executive` themes show a photo. Don't want one? Delete the `photo:` line.
+
+### Step 8: Make your cover letter
+
+Edit `cover_letter.yaml` the same way, then:
+
+```bash
+cv-as-code build cover_letter.yaml
+```
+
+### Step 9 (optional): Tailor it to a job with AI
+
+1. Paste the job post into `job.md`.
+2. Get an API key from [Anthropic](https://console.anthropic.com) (or OpenAI). Each run uses a
+   little of your API credit.
+3. Install the AI add-on and add your key:
+
+   ```bash
+   pip install "cv-as-code[ai] @ https://github.com/whoisadityaj/cv-as-code/archive/refs/heads/main.zip"
+   export ANTHROPIC_API_KEY=your-key-here      # Windows: $env:ANTHROPIC_API_KEY="your-key-here"
+   ```
+
+4. Run it:
+
+   ```bash
+   cv-as-code tailor job.md --cv cv.yaml --letter cover_letter.yaml --out tailored/acme --build
+   ```
+
+Your originals are not changed. The tailored files and PDFs go in `tailored/acme`. Read any
+**"Check these before sending"** warnings: they point at things the AI may have made up.
+
+### Step 10: Before you send it
+
+- Applying through an online job portal? Make a plain version that hiring software can read:
+  `cv-as-code build cv.yaml --ats`
+- Open the PDF and check the dates, numbers and contact details yourself.
 
 ## 🎨 Themes
 
@@ -166,7 +285,7 @@ Every push rebuilds the PDFs and attaches them to the run.
 `date` (`auto` = today, format with `date_format`), `recipient` (`hiring_manager`, `team`,
 `company`, `address`), `salutation`, `body` (list of Markdown paragraphs), `sign_off`.
 
-Every section is optional. See the [examples](examples/) for everything in use.
+Every section is optional. Run `cv-as-code init` (or see [examples](examples/)) for everything in use.
 
 ## Development
 
