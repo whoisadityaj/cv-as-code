@@ -1,0 +1,45 @@
+/* bold: dark full-width header band with photo, punchy accent headings. */
+:root {
+  --accent: #7c3aed;
+  --accent-soft: #c4b5fd;
+  --serif: var(--sans);
+  --link: var(--accent);
+  --base-size: 9.5pt;
+}
+
+.cv-header {
+  margin: -12mm -11mm 6mm -11mm;   /* bleed into the page margins */
+  padding: 10mm 11mm 8mm 11mm;
+  background: #111827;
+  color: #ffffff;
+  text-align: left;
+}
+.cv-header .name { color: #ffffff; font-size: 27pt; letter-spacing: -0.01em; }
+.cv-header .role-line { color: var(--accent-soft); font-style: normal; font-weight: bold; font-size: 11pt; }
+.cv-header .contact { color: #d1d5db; text-align: left; margin-top: 2mm; }
+.cv-header .contact a { color: #ffffff; }
+.cv-header .contact .sep { color: var(--accent); }
+.cv-header .photo { width: 30mm; height: 30mm; border: 1.2mm solid var(--accent); }
+
+.section { margin-top: 5mm; }
+.section h2 { border-bottom: 0; font-size: 11pt; letter-spacing: 0.04em; color: #111827; }
+.section h2::after {
+  content: "";
+  display: block;
+  width: 12mm; height: 1.2mm;
+  margin-top: 1mm;
+  border-radius: 0.6mm;
+  background: var(--accent);
+}
+.experience .entry { border-bottom-color: #ede9fe; }
+.entry .row1 .dates { color: var(--accent); font-weight: bold; font-size: 9pt; }
+.entry .accomplishments-label { display: none; }
+.skills .group .label { font-style: normal; color: var(--accent); }
+
+/* cover letter */
+.letter .sidebar .name-stack { color: #ffffff; font-weight: bold; font-size: 32pt; }
+.letter .sidebar .tagline { color: #ffffff; opacity: 0.85; font-weight: bold; }
+.letter .sidebar .links a, .letter .sidebar .links a .icon { color: #ffffff; }
+.letter .sidebar .photo { width: 32mm; height: 32mm; border: 1.1mm solid #ffffff; }
+.letter .body-col { padding-left: 14mm; }
+.letter .body-col .date { border-bottom-color: var(--accent); color: var(--accent); font-weight: bold; }

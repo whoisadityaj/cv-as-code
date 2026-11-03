@@ -145,6 +145,7 @@ class Theme:
 
 
 THEMES: dict[str, Theme] = {
+    "bold": Theme(accent="#7c3aed", photo=True, letter_band=True),
     "classic": Theme(),
     "compact": Theme(),
     "modern": Theme(accent="#2563eb", letter_band=True),
