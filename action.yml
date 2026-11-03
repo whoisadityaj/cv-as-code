@@ -1,0 +1,47 @@
+name: cv-as-code
+description: Build your CV and cover letter PDFs from YAML on every push.
+branding:
+  icon: file-text
+  color: blue
+inputs:
+  files:
+    description: Space-separated YAML files to build (CV and/or cover letter).
+    required: true
+  out:
+    description: Output directory.
+    default: output
+  theme:
+    description: Theme override (classic, modern, compact). Empty = use the YAML setting.
+    default: ""
+  ats:
+    description: Set to "true" for ATS-friendly plain output.
+    default: "false"
+outputs:
+  out:
+    description: Directory containing the generated HTML and PDF files.
+    value: ${{ inputs.out }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Install system libraries for PDF rendering
+      shell: bash
+      run: sudo apt-get update -qq && sudo apt-get install -y -qq libpango-1.0-0 libpangoft2-1.0-0 fonts-liberation fonts-dejavu-core
+    - name: Install cv-as-code
+      shell: bash
+      run: pip install --quiet "${{ github.action_path }}"
+    - name: Build
+      shell: bash
+      env:
+        FILES: ${{ inputs.files }}
+        OUT: ${{ inputs.out }}
+        THEME: ${{ inputs.theme }}
+        ATS: ${{ inputs.ats }}
+      run: |
+        args=(--out "$OUT")
+        [ -n "$THEME" ] && args+=(--theme "$THEME")
+        [ "$ATS" = "true" ] && args+=(--ats)
+        # shellcheck disable=SC2086  # FILES is intentionally word-split
+        cv-as-code build $FILES "${args[@]}"

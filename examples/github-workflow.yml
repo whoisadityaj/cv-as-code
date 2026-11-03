@@ -1,0 +1,23 @@
+# Copy to .github/workflows/cv.yml in the repo that holds your CV YAML.
+# Every push rebuilds your PDFs and attaches them to the workflow run.
+name: Build CV
+
+on:
+  push:
+    paths: ["cv.yaml", "cover_letter.yaml", ".github/workflows/cv.yml"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: whoisadityaj/cv-as-code@v0.1.0
+        with:
+          files: cv.yaml cover_letter.yaml
+          # theme: modern
+          # ats: "true"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cv-pdfs
+          path: output/*.pdf
