@@ -169,7 +169,7 @@ def _band(page: str, colour: str, width: str) -> str:
     # WeasyPrint doesn't resolve var() inside @page, so the band gets the literal colour.
     # The page paints it edge to edge; root and column backgrounds must stay transparent.
     return (
-        f"{page} {{ background: linear-gradient(90deg, {colour} {width}, #ffffff {width}); }}\n"
+        f"{page} {{ background: linear-gradient(90deg, {colour} {width}, #ffffff {width}) no-repeat; }}\n"
         "html, body { background: transparent; }\n"
         ".letter .sidebar, .sidebar-layout .side { background: transparent; }"
     )
