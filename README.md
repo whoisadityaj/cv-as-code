@@ -18,30 +18,30 @@
 </p>
 
 <p align="center">
-  <a href="#quickstart">Quickstart</a> ·
-  <a href="#themes">Themes</a> ·
-  <a href="#tailor-to-a-job-with-ai">AI tailoring</a> ·
-  <a href="#build-in-github-actions">GitHub Action</a>
+  <a href="#-quickstart">⚡ Quickstart</a> ·
+  <a href="#-themes">🎨 Themes</a> ·
+  <a href="#-tailor-to-a-job-with-ai">🤖 AI tailoring</a> ·
+  <a href="#-build-in-github-actions">🚀 GitHub Action</a>
 </p>
 
 <p align="center">
   <img src="docs/images/demo.svg" alt="Terminal demo: build a PDF, then tailor to a job and get warned about an invented number and skill" width="100%">
 </p>
 
-## What you get
+## ✨ What you get
 
 <p align="center">
   <img src="docs/images/showcase.png" alt="Three real pages rendered by cv-as-code from one YAML file: sidebar CV, bold cover letter and executive CV" width="100%">
 </p>
 
-- **YAML in, PDF out.** Plain text you can diff, review and keep in Git.
-- **7 themes + ATS mode.** From classic to a two-column sidebar with your photo, plus a plain
+- 📄 **YAML in, PDF out.** Plain text you can diff, review and keep in Git.
+- 🎨 **7 themes + ATS mode.** From classic to a two-column sidebar with your photo, plus a plain
   layout that applicant-tracking systems parse cleanly.
-- **AI tailoring with a fact check.** AI edits your YAML (never the PDF) to fit a job description,
+- 🤖 **AI tailoring with a fact check.** AI edits your YAML (never the PDF) to fit a job description,
   then cv-as-code flags any number, date, employer, school or skill that wasn't in your original.
-- **Runs in GitHub Actions.** Push your YAML, get fresh PDFs.
+- 🚀 **Runs in GitHub Actions.** Push your YAML, get fresh PDFs.
 
-## Quickstart
+## ⚡ Quickstart
 
 ```bash
 pip install git+https://github.com/whoisadityaj/cv-as-code
@@ -59,7 +59,7 @@ Text fields support inline Markdown (`**bold**`, `*italic*`, `[link](https://…
 > `sudo apt install libpango-1.0-0 libpangoft2-1.0-0`. The HTML is always written, so you can
 > also open it in a browser and print to PDF.
 
-## Themes
+## 🎨 Themes
 
 Seven looks from the same YAML, plus an ATS mode. Three of them show your photo.
 
@@ -69,14 +69,14 @@ Seven looks from the same YAML, plus an ATS mode. Three of them show your photo.
 
 | Theme | Look | Photo |
 |---|---|:---:|
-| `sidebar` | Two columns: photo, contact and skill chips on a full-height colour panel | ✓ |
-| `bold` | Dark header band, accent headings | ✓ |
-| `executive` | Refined serif, gold accents, photo on the right | ✓ |
-| `modern` | Sans-serif, accent colour, coloured cover-letter sidebar | |
-| `minimal` | Light type, lots of white space, labels in the margin | |
-| `classic` (default) | Serif, centred header, ruled section titles | |
-| `compact` | Smaller type and tighter spacing to fit more on one page | |
-| ATS mode | One plain column, full URLs, no photo, colour or icons | |
+| `sidebar` | Two columns: photo, contact and skill chips on a full-height colour panel | ✅ |
+| `bold` | Dark header band, accent headings | ✅ |
+| `executive` | Refined serif, gold accents, photo on the right | ✅ |
+| `modern` | Sans-serif, accent colour, coloured cover-letter sidebar | ❌ |
+| `minimal` | Light type, lots of white space, labels in the margin | ❌ |
+| `classic` (default) | Serif, centred header, ruled section titles | ❌ |
+| `compact` | Smaller type and tighter spacing to fit more on one page | ❌ |
+| ATS mode | One plain column, full URLs, no photo, colour or icons | ❌ |
 
 Set them in YAML or override on the command line:
 
@@ -95,10 +95,10 @@ cv-as-code build cv.yaml --theme bold
 cv-as-code build cv.yaml cover_letter.yaml --ats
 ```
 
-> **Photo or not?** Many US and UK employers prefer CVs without photos, and ATS software ignores
+> 📸 **Photo or not?** Many US and UK employers prefer CVs without photos, and ATS software ignores
 > them. Photos are common in much of Europe, Asia and Latin America. ATS mode always leaves it out.
 
-## Tailor to a job with AI
+## 🤖 Tailor to a job with AI
 
 The AI never touches a PDF. It reads your YAML and the job post, and writes a new YAML:
 
@@ -136,7 +136,7 @@ draft: read the diff before you send anything.
 Options: `--provider anthropic|openai`, `--model NAME` (Anthropic defaults to Claude Sonnet; OpenAI
 needs a model name). Your CV and the job description are sent to the provider you choose.
 
-## Build in GitHub Actions
+## 🚀 Build in GitHub Actions
 
 Keep your CV in a (private) repo and copy [`examples/github-workflow.yml`](examples/github-workflow.yml)
 to `.github/workflows/cv.yml`:
