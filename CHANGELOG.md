@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0 — 2026-11-03
+
+- Optional `cv-as-code.yaml` project file (`cv`, `letter`, `output`, `tailored`, `build`), so
+  `cv-as-code build` and `cv-as-code tailor jds/<job>.md` work without paths.
+- `tailor` names its output folder after the job file, can build by default, and prints the
+  `diff` commands to review changes. `--no-build` overrides the project file.
+
 ## 0.3.0 — 2026-11-03
 
 - `cv-as-code init` creates starter files (`cv.yaml`, `cover_letter.yaml`, `job.md`, sample photo)
