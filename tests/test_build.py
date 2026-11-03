@@ -1,6 +1,6 @@
 import pytest
 
-from cv_as_code.build import build_file, detect_kind, output_stem, render, theme_names
+from cv_as_code.build import TEMPLATES, build_file, detect_kind, output_stem, render, theme_names
 from conftest import EXAMPLES, needs_pdf
 
 
@@ -17,14 +17,16 @@ def test_output_stem_comes_from_the_name(cv, letter):
     assert output_stem({"name": "José O'Neil-Smith"}, "cv") == "Jos_O_Neil_Smith_CV"
 
 
-def test_themes_are_listed():
-    assert theme_names() == ["classic", "compact", "modern"]
+def test_every_theme_has_a_stylesheet():
+    assert "classic" in theme_names()
+    for name in theme_names():
+        assert (TEMPLATES / "themes" / f"{name}.css").is_file(), name
 
 
-@pytest.mark.parametrize("theme", ["classic", "modern", "compact"])
+@pytest.mark.parametrize("theme", theme_names())
 def test_every_theme_renders_both_documents(cv, letter, theme):
-    assert "Globex Payments" in render(cv, "cv", theme=theme)
-    assert "Umbrella Health" in render(letter, "cover_letter", theme=theme)
+    assert "Globex Payments" in render(cv, "cv", theme=theme, base_dir=EXAMPLES)
+    assert "Umbrella Health" in render(letter, "cover_letter", theme=theme, base_dir=EXAMPLES)
 
 
 def test_unknown_theme_is_an_error(cv):
@@ -80,7 +82,7 @@ def test_html_only_build(tmp_path):
 
 
 @needs_pdf
-@pytest.mark.parametrize("theme", ["classic", "modern", "compact"])
+@pytest.mark.parametrize("theme", theme_names())
 @pytest.mark.parametrize("ats", [False, True])
 def test_examples_render_to_one_page_pdfs(tmp_path, theme, ats):
     from weasyprint import HTML

@@ -1,0 +1,75 @@
+/* sidebar: two columns. Photo, contact, skills and education on a full-height
+   coloured panel (painted by build.py); experience and projects on the right. */
+:root {
+  --accent: #1e3a5f;
+  --accent-soft: #9cc4f5;
+  --serif: var(--sans);
+  --link: var(--accent);
+  --base-size: 9.3pt;
+}
+@page { margin: 11mm 0 10mm 0; }
+
+.sidebar-layout { display: grid; grid-template-columns: 34% 66%; }
+.side { padding: 1mm 7mm 0 9mm; color: #ffffff; }
+.main { padding: 1mm 11mm 0 8mm; }
+
+.side .photo {
+  width: 34mm; height: 34mm;
+  margin: 0 auto 6mm auto;
+  border: 1.2mm solid rgba(255, 255, 255, 0.85);
+}
+.side .name { font-size: 21pt; font-weight: bold; line-height: 1.1; margin: 0; color: #ffffff; }
+.side .role-line { color: var(--accent-soft); font-size: 10.5pt; margin: 2mm 0 0 0; }
+.side a { color: #ffffff; }
+.side .section { margin-top: 7mm; }
+.side .section h2 {
+  color: #ffffff;
+  border-bottom: 0.6px solid rgba(255, 255, 255, 0.35);
+  font-size: 8.8pt;
+  letter-spacing: 0.14em;
+  padding-bottom: 1.5mm;
+  margin-bottom: 2.5mm;
+}
+.contact-list { list-style: none; margin: 0; padding: 0; }
+.contact-list li { margin: 0 0 1.6mm 0; padding: 0; font-size: 8.5pt; overflow-wrap: anywhere; }
+
+.side .skills .group { margin: 0 0 2.6mm 0; }
+.side .skills .label {
+  display: block; margin: 0 0 1.2mm 0;
+  font-style: normal; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent-soft);
+}
+.side .skills .comma { display: none; }
+.side .skills .skill {
+  display: inline-block;
+  margin: 0 1mm 1.3mm 0; padding: 0.5mm 2.2mm;
+  border-radius: 3mm;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 8.3pt;
+}
+.side .entry { margin: 0 0 2mm 0; }
+.side .entry .row1 { display: block; }
+.side .entry .row1 .role { font-size: 9pt; }
+.side .entry .row1 .dates { display: block; font-size: 8.3pt; color: rgba(255, 255, 255, 0.7); }
+.side ul { margin-left: 4mm; font-size: 8.5pt; }
+.side .contact-list { margin: 0; }
+
+.main .cv-summary { font-size: 9.6pt; margin: 0 0 2mm 0; }
+.main .section { margin-top: 6mm; }
+.main .section:first-child { margin-top: 0; }
+.main .section h2 {
+  color: var(--accent);
+  border-bottom: 1.4px solid var(--accent);
+  font-size: 10.5pt;
+  letter-spacing: 0.1em;
+}
+.main .experience .entry { border-bottom-color: #e5e7eb; }
+.main .entry .accomplishments-label { display: none; }
+.main .entry .row1 .dates { color: #6b7280; }
+
+/* cover letter */
+.letter .sidebar .name-stack { color: #ffffff; font-weight: bold; font-size: 30pt; }
+.letter .sidebar .tagline { color: var(--accent-soft); }
+.letter .sidebar .links a, .letter .sidebar .links a .icon { color: #ffffff; }
+.letter .sidebar .photo { width: 32mm; height: 32mm; border: 1.1mm solid rgba(255, 255, 255, 0.85); }
+.letter .body-col { padding-left: 14mm; }
