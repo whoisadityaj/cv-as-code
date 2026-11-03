@@ -1,0 +1,39 @@
+/* minimal: quiet and airy. Light type, grey section labels in a left margin column. */
+:root {
+  --accent: #111827;
+  --serif: var(--sans);
+  --link: #111827;
+  --base-size: 9.4pt;
+  --base-line: 1.38;
+}
+@page { margin: 16mm 16mm 14mm 16mm; }
+
+.cv-header { text-align: left; margin-bottom: 7mm; }
+.cv-header .name { font-weight: 300; font-size: 30pt; letter-spacing: -0.02em; }
+.cv-header .role-line { font-style: normal; color: #6b7280; font-size: 11pt; margin-top: 1mm; }
+.cv-header .contact { text-align: left; color: #6b7280; margin-top: 2.5mm; }
+.cv-header .contact a { color: #374151; }
+.cv-header .contact .sep { color: #d1d5db; }
+
+.cv-summary { margin: 0 0 5mm 32mm; color: #374151; }
+.section { margin-top: 5mm; }
+.section::after { content: ""; display: block; clear: both; }
+.section h2 {
+  float: left;
+  width: 28mm;
+  margin: 0.6mm 0 0 0; padding: 0;
+  border: 0;
+  font-size: 7.8pt; letter-spacing: 0.16em;
+  color: #9ca3af;
+}
+.section > :not(h2), .section.skills > .group { margin-left: 32mm; }
+.section > ul { padding-left: 4mm; }
+.experience .entry { border-bottom: 0; }
+.entry { margin-top: 0; }
+.entry .accomplishments-label { display: none; }
+.entry .row1 .dates { color: #9ca3af; }
+.skills .group .label { font-style: normal; font-weight: normal; color: #6b7280; }
+
+/* cover letter */
+.letter .sidebar .name-stack { font-weight: 300; }
+.letter .sidebar .tagline { color: #6b7280; }
