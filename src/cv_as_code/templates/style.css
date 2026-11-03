@@ -1,0 +1,326 @@
+/* ---------------------------------------------------------------
+   cv-as-code default theme
+     - CV           = classic one-column resume layout (serif, bold
+                      uppercase section headers with a rule underneath)
+     - Cover letter = two-column: stacked name sidebar + letter body
+   Uses system fonts only, so nothing needs to be bundled.
+   --------------------------------------------------------------- */
+
+:root {
+  --ink:       #000000;
+  --ink-soft:  #000000;
+  --link:      #0064c8;
+  --rule:      #666666;
+  --accent:    #d24f3a;     /* cover-letter tagline colour */
+  --serif:     "Georgia", "Times New Roman", "Liberation Serif", "DejaVu Serif", serif;
+  --sans:      "Helvetica Neue", "Helvetica", "Arial", "Liberation Sans", "DejaVu Sans", sans-serif;
+  --base-size: 9.7pt;
+  --base-line: 1.28;
+}
+
+@page {
+  size: A4;
+  margin: 12mm 11mm 11mm 11mm;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  background: #ffffff;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: var(--base-size);
+  line-height: var(--base-line);
+  margin: 0;
+  padding: 0;
+}
+
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+p { margin: 0 0 3px 0; }
+
+ul {
+  margin: 2px 0 4px 20px;
+  padding: 0;
+  list-style: disc outside;
+}
+li { margin: 1px 0; padding-left: 2px; }
+
+strong { font-weight: bold; }
+em     { font-style: italic; }
+
+/* ============================================================
+   CV  — Jake's Resume style
+   ============================================================ */
+
+.cv-header {
+  text-align: center;
+  margin: 0 0 7px 0;
+}
+
+.cv-header .name {
+  font-family: var(--serif);
+  font-size: 21pt;
+  font-weight: bold;
+  letter-spacing: 0;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.cv-header .role-line {
+  font-size: 10.5pt;
+  margin: 2px 0 0 0;
+  font-style: italic;
+}
+
+.cv-header .contact {
+  font-size: 9.2pt;
+  margin: 3px 0 0 0;
+  text-align: center;
+}
+.cv-header .contact .sep {
+  margin: 0 4px;
+  color: var(--ink);
+}
+
+.cv-summary {
+  margin: 4px 0 6px 0;
+}
+
+/* section headers ---------------------------------------------- */
+
+.section {
+  margin-top: 8px;
+}
+
+.section h2 {
+  font-family: var(--serif);
+  font-size: 11.5pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 3px 0;
+  padding: 0 0 1px 0;
+  border-bottom: 0.75px solid var(--rule);
+  letter-spacing: 0.01em;
+}
+
+/* skills ------------------------------------------------------- */
+
+.skills .group { margin: 1px 0; }
+.skills .group .label {
+  font-weight: bold;
+  font-style: italic;
+  margin-right: 3px;
+}
+.skills .group .level {
+  font-weight: normal;
+}
+.skills .group .items strong { font-weight: bold; }
+
+/* experience / education / projects entries ------------------- */
+
+.entry {
+  margin: 6px 0 7px 0;
+  break-inside: avoid;
+}
+.experience .entry {
+  padding-bottom: 4px;
+  border-bottom: 0.45px solid #dddddd;
+}
+.experience .entry:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.projects .entry { break-inside: auto; }
+
+.entry .row1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.entry .row1 .role {
+  font-weight: bold;
+  font-size: 10.2pt;
+}
+.entry .row1 .role a { color: var(--link); font-weight: bold; }
+.entry .row1 .dates {
+  font-weight: normal;
+  font-size: 9.6pt;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.entry .row2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 1px;
+}
+.entry .row2 .company-line {
+  font-size: 9.8pt;
+}
+.entry .row2 .company {
+  font-weight: bold;
+}
+.entry .row2 .location {
+  font-weight: normal;
+}
+.entry .row2 .dates {
+  font-size: 11pt;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.entry .intro {
+  margin: 1px 0 1px 0;
+}
+
+.entry .accomplishments-label {
+  display: block;
+  font-weight: bold;
+  text-decoration: underline;
+  font-size: 9.5pt;
+  margin: 3px 0 0 0;
+}
+
+.entry ul { margin-top: 2px; }
+.entry li mark.kw {
+  background: transparent;
+  color: var(--ink);
+  font-weight: bold;
+}
+
+.projects .stack { font-style: italic; }
+.projects .links { }
+
+/* ============================================================
+   Cover letter — two-column with sidebar
+   ============================================================ */
+
+@page cover-letter {
+  size: A4;
+  margin: 0;
+}
+
+.letter {
+  page: cover-letter;
+  display: grid;
+  grid-template-columns: 33% 67%;
+  min-height: 100vh;          /* full page height (page has no margin) */
+  font-family: var(--sans);
+  font-size: 11pt;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.letter .sidebar {
+  background: #ffffff;
+  padding: 30mm 8mm 20mm 18mm;
+}
+
+.letter .sidebar .name-stack {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 36pt;
+  line-height: 1.0;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.letter .sidebar .name-stack .first,
+.letter .sidebar .name-stack .last {
+  display: block;
+}
+
+.letter .sidebar .tagline {
+  color: var(--accent);
+  font-size: 12pt;
+  font-weight: 400;
+  margin-top: 8px;
+}
+
+.letter .sidebar .links {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 10pt;
+}
+.letter .sidebar .links a {
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.letter .sidebar .links a .icon {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  line-height: 14px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 10pt;
+  color: var(--ink);
+}
+
+.letter .body-col {
+  padding: 30mm 18mm 20mm 8mm;
+}
+
+.letter .body-col .date {
+  border-bottom: 0.6px solid #888;
+  padding-bottom: 2px;
+  display: inline-block;
+  margin: 0 0 14px 0;
+  font-size: 10.5pt;
+  color: #444;
+  letter-spacing: 0.02em;
+}
+
+.letter .body-col .salutation {
+  margin: 0 0 8px 0;
+}
+
+.letter .body-col .body p {
+  margin: 0 0 10px 0;
+}
+
+.letter .body-col .body ul {
+  margin: 4px 0 10px 0;
+  padding: 0;
+  list-style: none;
+}
+.letter .body-col .body ul li {
+  position: relative;
+  padding-left: 16px;
+  margin: 2px 0;
+}
+.letter .body-col .body ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #b9b9b9;
+}
+
+.letter .body-col .signoff {
+  margin-top: 14px;
+}
+.letter .body-col .signoff .sig-line {
+  margin: 0;
+}
+.letter .body-col .signoff .signature {
+  margin: 0;
+}
+
+.letter .body-col .recipient {
+  margin: 0 0 12px 0;
+}
