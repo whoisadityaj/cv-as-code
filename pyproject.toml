@@ -27,5 +27,12 @@ cv-as-code = "cv_as_code.cli:main"
 [tool.hatch.build.targets.wheel]
 packages = ["src/cv_as_code"]
 
+# `cv-as-code init` copies these starter files into the user's folder.
+[tool.hatch.build.targets.wheel.force-include]
+"examples/cv.yaml" = "cv_as_code/starter/cv.yaml"
+"examples/cover_letter.yaml" = "cv_as_code/starter/cover_letter.yaml"
+"examples/job.md" = "cv_as_code/starter/job.md"
+"examples/jane.png" = "cv_as_code/starter/jane.png"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

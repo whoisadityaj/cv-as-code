@@ -9,6 +9,20 @@ from . import __version__
 from .build import PAGE_PRESETS, build_file, theme_names
 
 
+def cmd_init(args: argparse.Namespace) -> int:
+    from .starter import init
+
+    try:
+        written = init(args.folder, force=args.force)
+    except FileExistsError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
+    for p in written:
+        print(f"wrote {p}")
+    print("\nNext: edit cv.yaml, then run:  cv-as-code build cv.yaml")
+    return 0
+
+
 def cmd_build(args: argparse.Namespace) -> int:
     missing_pdf = False
     for path in args.files:
@@ -63,6 +77,11 @@ def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="cv-as-code", description="Your CV as code: YAML in, clean PDF out.")
     p.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     sub = p.add_subparsers(dest="command", required=True)
+
+    i = sub.add_parser("init", help="Create starter cv.yaml, cover_letter.yaml, job.md and a sample photo.")
+    i.add_argument("folder", nargs="?", type=Path, default=Path("."), help="Where to put them (default: here).")
+    i.add_argument("--force", action="store_true", help="Overwrite files that already exist.")
+    i.set_defaults(func=cmd_init)
 
     b = sub.add_parser("build", help="Render CV / cover-letter YAML files to HTML and PDF.")
     b.add_argument("files", nargs="+", type=Path, help="YAML files (CV or cover letter, detected automatically).")
