@@ -1,4 +1,4 @@
-"""Command line: `cv-as-code build ...` and `cv-as-code tailor ...`."""
+"""Command line: `cv-as-code init`, `build` and `tailor`."""
 from __future__ import annotations
 
 import argparse
@@ -7,6 +7,7 @@ from pathlib import Path
 
 from . import __version__
 from .build import PAGE_PRESETS, build_file, theme_names
+from .config import CONFIG_NAME, job_slug, load_project
 
 
 def cmd_init(args: argparse.Namespace) -> int:
@@ -24,11 +25,21 @@ def cmd_init(args: argparse.Namespace) -> int:
 
 
 def cmd_build(args: argparse.Namespace) -> int:
+    try:
+        project = load_project()
+    except ValueError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
+    files = args.files or [p for p in (project.cv, project.letter) if p]
+    if not files:
+        print(f"error: give YAML files to build, or list them in {CONFIG_NAME} (cv: / letter:)", file=sys.stderr)
+        return 1
+    out = args.out or project.output
     missing_pdf = False
-    for path in args.files:
+    for path in files:
         try:
             written = build_file(
-                path, args.out, page_size=args.page_size, pdf=not args.html_only,
+                path, out, page_size=args.page_size, pdf=not args.html_only,
                 theme=args.theme, ats=True if args.ats else None,
             )
         except (FileNotFoundError, ValueError) as e:
@@ -46,13 +57,24 @@ def cmd_build(args: argparse.Namespace) -> int:
 def cmd_tailor(args: argparse.Namespace) -> int:
     from .tailor import TailorError, tailor
 
-    for p in (args.jd, args.cv, args.letter):
+    try:
+        project = load_project()
+    except ValueError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
+    cv, letter = args.cv or project.cv, args.letter or project.letter
+    if not cv or not letter:
+        print(f"error: pass --cv and --letter, or set cv: and letter: in {CONFIG_NAME}", file=sys.stderr)
+        return 1
+    out = args.out or project.tailored / job_slug(args.jd)
+    build = project.build if args.build is None else args.build
+    for p in (args.jd, cv, letter):
         if not p.exists():
             print(f"error: {p} not found", file=sys.stderr)
             return 1
     try:
         out_cv, out_letter, notes, warns = tailor(
-            args.jd, args.cv, args.letter, args.out,
+            args.jd, cv, letter, out,
             provider=args.provider, model=args.model, force=args.force,
         )
     except TailorError as e:
@@ -66,10 +88,11 @@ def cmd_tailor(args: argparse.Namespace) -> int:
         print("\nCheck these before sending (possible invented or changed facts):", file=sys.stderr)
         for w in warns:
             print(f"  - {w}", file=sys.stderr)
-    if args.build:
+    if build:
         for path in (out_cv, out_letter):
-            for p in build_file(path, args.out):
+            for p in build_file(path, out):
                 print(f"wrote {p}")
+    print(f"\nReview what changed before sending:\n  diff -u {cv} {out_cv}\n  diff -u {letter} {out_letter}")
     return 2 if warns and args.strict else 0
 
 
@@ -84,8 +107,9 @@ def main(argv: list[str] | None = None) -> int:
     i.set_defaults(func=cmd_init)
 
     b = sub.add_parser("build", help="Render CV / cover-letter YAML files to HTML and PDF.")
-    b.add_argument("files", nargs="+", type=Path, help="YAML files (CV or cover letter, detected automatically).")
-    b.add_argument("--out", type=Path, default=Path("output"), help="Output directory (default: ./output).")
+    b.add_argument("files", nargs="*", type=Path,
+                   help=f"YAML files (CV or cover letter, detected automatically). Default: cv/letter from {CONFIG_NAME}.")
+    b.add_argument("--out", type=Path, help=f"Output directory (default: ./output, or `output:` in {CONFIG_NAME}).")
     b.add_argument(
         "--page-size", default="",
         help=f"Preset ({', '.join(PAGE_PRESETS)}) or a CSS size like '210mm 380mm'.",
@@ -97,12 +121,15 @@ def main(argv: list[str] | None = None) -> int:
 
     t = sub.add_parser("tailor", help="Tailor your CV and cover letter to a job description with AI.")
     t.add_argument("jd", type=Path, help="Job description (text or Markdown file).")
-    t.add_argument("--cv", type=Path, required=True, help="Your CV YAML.")
-    t.add_argument("--letter", type=Path, required=True, help="Your cover-letter YAML.")
-    t.add_argument("--out", type=Path, required=True, help="Folder for the tailored YAML (and PDFs with --build).")
+    t.add_argument("--cv", type=Path, help=f"Your CV YAML (default: `cv:` in {CONFIG_NAME}).")
+    t.add_argument("--letter", type=Path, help=f"Your cover-letter YAML (default: `letter:` in {CONFIG_NAME}).")
+    t.add_argument("--out", type=Path,
+                   help="Folder for the tailored YAML and PDFs (default: tailored/<job file name>, "
+                        f"or `tailored:` in {CONFIG_NAME}).")
     t.add_argument("--provider", choices=["auto", "anthropic", "openai"], default="auto")
     t.add_argument("--model", help="Model name (default: Anthropic's Claude Sonnet; required for OpenAI).")
-    t.add_argument("--build", action="store_true", help="Also render the tailored documents.")
+    t.add_argument("--build", action=argparse.BooleanOptionalAction, default=None,
+                   help=f"Also render the tailored documents (default: `build:` in {CONFIG_NAME}, else no).")
     t.add_argument("--force", action="store_true", help="Overwrite existing files in --out.")
     t.add_argument("--strict", action="store_true", help="Exit with code 2 if the fact check raises warnings.")
     t.set_defaults(func=cmd_tailor)
