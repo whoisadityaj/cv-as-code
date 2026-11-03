@@ -148,6 +148,7 @@ THEMES: dict[str, Theme] = {
     "classic": Theme(),
     "compact": Theme(),
     "modern": Theme(accent="#2563eb", letter_band=True),
+    "executive": Theme(accent="#a67c37", photo=True),
     "sidebar": Theme(accent="#1e3a5f", layout="sidebar", photo=True, cv_band=True, letter_band=True),
 }
 

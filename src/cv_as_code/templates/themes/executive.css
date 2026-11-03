@@ -1,0 +1,54 @@
+/* executive: refined serif, gold accents, photo on the right of the header. */
+:root {
+  --accent: #a67c37;
+  --link: #6b4f1d;
+  --base-size: 9.6pt;
+}
+
+.cv-header {
+  text-align: center;
+  padding-bottom: 4mm;
+  margin-bottom: 4mm;
+  border-bottom: 3px double var(--accent);
+}
+.has-photo .cv-header { justify-content: space-between; }
+.cv-header .photo {
+  order: 2;
+  width: 26mm; height: 26mm;
+  border-radius: 2.5mm;
+  border: 0.8mm solid var(--accent);
+}
+.cv-header .name { font-size: 26pt; font-weight: normal; letter-spacing: 0.06em; text-transform: uppercase; }
+.cv-header .role-line {
+  margin-top: 1.5mm;
+  font-style: normal; font-size: 9.5pt; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--accent);
+}
+.cv-header .contact { margin-top: 2.5mm; color: #444444; }
+.cv-header .contact .sep { color: var(--accent); }
+
+.section h2 {
+  font-weight: normal; font-size: 10.5pt; letter-spacing: 0.2em;
+  border-bottom: 0;
+  color: #1f1f1f;
+}
+.section h2::after {
+  content: "";
+  display: block;
+  width: 14mm; height: 0.6mm;
+  margin-top: 1.2mm;
+  background: var(--accent);
+}
+.section { margin-top: 4.5mm; }
+.experience .entry { border-bottom: 0; }
+.entry .row1 .role { font-size: 10.4pt; }
+.entry .row1 .dates { font-style: italic; color: #6b6b6b; }
+.entry .accomplishments-label { text-decoration: none; font-style: italic; font-weight: normal; color: var(--accent); }
+.skills .group .label { font-style: normal; }
+
+/* cover letter */
+.letter { font-family: var(--serif); }
+.letter .sidebar .name-stack { font-family: var(--serif); font-weight: normal; font-size: 30pt; letter-spacing: 0.05em; }
+.letter .sidebar .tagline { color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; font-size: 9.5pt; }
+.letter .sidebar .photo { width: 30mm; height: 30mm; border-radius: 2.5mm; border: 0.8mm solid var(--accent); }
+.letter .body-col .date { border-bottom-color: var(--accent); }
