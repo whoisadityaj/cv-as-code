@@ -1,0 +1,38 @@
+# Example cover letter for a fictional person. Copy this file and replace everything.
+
+sender:
+  name: Jane Doe
+  tagline: Senior Backend Engineer
+  links:
+    - { label: jane.doe@example.com, url: "mailto:jane.doe@example.com", icon: "@" }
+    - { label: example.com, url: "https://example.com", icon: "↗" }
+    - { label: github.com/example, url: "https://github.com/example", icon: "→" }
+
+# "auto" prints today's date. date_format uses Python strftime codes.
+date: auto
+date_format: "%B %d, %Y"
+
+theme: classic
+page: letter
+
+recipient:
+  company: Umbrella Health
+  team: Platform Engineering
+
+# "Dear Hiring Manager," becomes "Dear <name>," when recipient.hiring_manager is set.
+salutation: Dear Hiring Manager,
+
+body:
+  - >-
+    I'm applying for the Senior Backend Engineer role on your Platform team. For the last
+    eight years I've built payment and logistics APIs that need to be fast, correct, and
+    easy to run at 3 a.m.
+  - >-
+    At Globex Payments I cut checkout latency from 820 ms to 190 ms and led a zero-downtime
+    migration of 40 million records to PostgreSQL. Before that, at Initech Logistics, I built
+    a Go tracking API serving 15k requests per minute and reduced cloud costs by 31%.
+  - >-
+    I'd love to bring the same care for reliability and clear documentation to Umbrella
+    Health. Thank you for your time.
+
+sign_off: Best regards,

@@ -1,0 +1,86 @@
+# Example CV for a fictional person. Copy this file and replace everything.
+# Text fields support inline Markdown: **bold**, *italic*, [links](https://example.com).
+
+name: Jane Doe
+title: Senior Backend Engineer
+contact:
+  phone: "+1 555 0100"
+  email: jane.doe@example.com
+  website: https://example.com
+  linkedin: https://www.linkedin.com/in/example
+  github: https://github.com/example
+  location: Austin, TX
+
+# Optional. Pick a look: classic (default), modern, or compact.
+theme: classic
+# Optional. a4 (default), letter, legal, single, single-tall, single-short, or a CSS size.
+page: letter
+
+summary: >-
+  Backend engineer with 8 years of experience building **payment and logistics APIs** in
+  Python and Go. I like boring, reliable systems, clear docs, and shipping small changes often.
+
+skills:
+  - group: Languages
+    items:
+      - { name: Python, bold: true }
+      - { name: Go, bold: true }
+      - { name: SQL }
+      - { name: TypeScript }
+  - group: Backend
+    items:
+      - { name: PostgreSQL }
+      - { name: Redis }
+      - { name: Kafka }
+      - { name: REST and gRPC APIs }
+  - group: Cloud & Ops
+    items:
+      - { name: AWS }
+      - { name: Docker }
+      - { name: Kubernetes }
+      - { name: Terraform }
+
+experience:
+  - role: Senior Backend Engineer
+    company: Globex Payments
+    location: Remote
+    start: Mar 2022
+    end: Present
+    intro: Payments platform team (6 engineers) behind checkout for 2,000+ merchants.
+    bullets:
+      - Cut checkout API p95 latency from **820 ms to 190 ms** by moving fraud checks to an async Kafka pipeline.
+      - Led the migration of 40 million payment records to a partitioned **PostgreSQL** cluster with zero downtime.
+      - Mentored 3 junior engineers; introduced design docs and a weekly API review.
+  - role: Backend Engineer
+    company: Initech Logistics
+    location: Austin, TX
+    start: Jun 2018
+    end: Feb 2022
+    bullets:
+      - Built the shipment-tracking API in **Go**, serving 15k requests per minute at peak.
+      - Reduced cloud costs by **31%** by right-sizing services and adding Redis caching.
+      - Wrote the on-call runbook that cut mean time to recovery from 2 hours to 25 minutes.
+  - role: Software Engineer (Intern)
+    company: Acme Analytics
+    location: Austin, TX
+    start: Jan 2017
+    end: May 2018
+    bullets:
+      - Automated nightly data imports in **Python**, replacing a 4-hour manual process.
+
+education:
+  - school: State University
+    degree: B.S. Computer Science
+    start: "2014"
+    end: "2018"
+
+projects:
+  - name: tinyqueue
+    stack: Go
+    links:
+      - { label: Code, url: "https://github.com/example/tinyqueue" }
+    bullets:
+      - A small persistent job queue on top of PostgreSQL. 300+ GitHub stars.
+
+certifications:
+  - AWS Certified Solutions Architect – Associate (2023)
