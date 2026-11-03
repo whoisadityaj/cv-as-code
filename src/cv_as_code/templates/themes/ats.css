@@ -1,0 +1,31 @@
+/* ATS-friendly: one column, plain text order, standard headings, no colour
+   blocks or icons, so applicant-tracking systems can parse every line. */
+:root {
+  --serif: "Arial", "Helvetica", "Liberation Sans", sans-serif;
+  --sans: var(--serif);
+  --link: #000000;
+  --accent: #000000;
+  --base-size: 10pt;
+}
+.cv-header { text-align: left; }
+.cv-header .contact { text-align: left; }
+.entry .row1, .entry .row2 { display: block; }
+.entry .row1 .dates { display: block; font-size: 9.6pt; }
+.experience .entry { border-bottom: 0; }
+.section h2 { border-bottom: 1px solid #000; letter-spacing: 0; }
+.entry .accomplishments-label { text-decoration: none; }
+.letter { display: block; min-height: 0; font-size: 10.5pt; }
+@page cover-letter { margin: 18mm 20mm; }
+.letter .sidebar, .letter .body-col { padding: 0; background: none; }
+.letter .sidebar { margin-bottom: 14px; }
+.letter .sidebar .name-stack { font-size: 18pt; font-weight: bold; text-transform: none; }
+.letter .sidebar .name-stack .first, .letter .sidebar .name-stack .last { display: inline; }
+.letter .sidebar .tagline { color: #000; }
+.letter .sidebar .links { flex-direction: row; flex-wrap: wrap; gap: 4px 14px; margin-top: 6px; }
+.letter .sidebar .links a .icon { display: none; }
+.letter .body-col .body ul { list-style: disc; padding-left: 18px; }
+.letter .body-col .body ul li::before { display: none; }
+@page cover-letter { background: none; }
+.cv-header { border-left: 0; padding-left: 0; }
+.letter .sidebar, .letter .sidebar .name-stack, .letter .sidebar .tagline,
+.letter .sidebar .links a, .letter .sidebar .links a .icon { color: #000000; opacity: 1; }
