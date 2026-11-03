@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 — 2026-11-03
+
+- `cv-as-code init` creates starter files (`cv.yaml`, `cover_letter.yaml`, `job.md`, sample photo)
+  to edit, so you don't need to clone the repo.
+- A custom `accent:` now also sets the light accent used on dark panels (sidebar, bold).
+- README: step-by-step guide in plain language, royal red look, emoji headings.
+
 ## 0.2.0 — 2026-11-03
 
 - Four new themes: `sidebar` (two columns, photo, skill chips), `bold` (dark header band),

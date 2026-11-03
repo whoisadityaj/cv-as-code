@@ -261,7 +261,7 @@ Keep your CV in a (private) repo and copy [`examples/github-workflow.yml`](examp
 to `.github/workflows/cv.yml`:
 
 ```yaml
-- uses: whoisadityaj/cv-as-code@v0.2.0
+- uses: whoisadityaj/cv-as-code@v0.3.0
   with:
     files: cv.yaml cover_letter.yaml
     # theme: modern

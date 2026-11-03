@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: whoisadityaj/cv-as-code@v0.2.0
+      - uses: whoisadityaj/cv-as-code@v0.3.0
         with:
           files: cv.yaml cover_letter.yaml
           # theme: modern
