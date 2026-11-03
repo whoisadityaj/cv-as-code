@@ -2,6 +2,7 @@ import json
 
 import pytest
 
+from cv_as_code import __version__
 from cv_as_code import tailor as t
 from cv_as_code.cli import main
 from conftest import EXAMPLES
@@ -10,7 +11,7 @@ from conftest import EXAMPLES
 def test_version(capsys):
     with pytest.raises(SystemExit):
         main(["--version"])
-    assert "cv-as-code 0.1.0" in capsys.readouterr().out
+    assert f"cv-as-code {__version__}" in capsys.readouterr().out
 
 
 def test_build_html_only(tmp_path):
