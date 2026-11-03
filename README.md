@@ -287,20 +287,6 @@ Every push rebuilds the PDFs and attaches them to the run.
 
 Every section is optional. Run `cv-as-code init` (or see [examples](examples/)) for everything in use.
 
-## Development
-
-```bash
-git clone https://github.com/whoisadityaj/cv-as-code && cd cv-as-code
-python -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev,ai]"
-pytest
-```
-
-Tests never call a real AI provider; tailoring is tested with a fake model.
-
-Regenerate the README images with `python docs/make_animations.py` (animations) and
-`python docs/make_gallery.py` (theme previews).
-
 ## License
 
 [MIT](LICENSE). If cv-as-code helps you land an interview, a ⭐ helps the next person find it.
