@@ -12,9 +12,11 @@ from pathlib import Path
 
 OUT = Path(__file__).parent / "images"
 
-BG, PANEL, BORDER = "#0d1117", "#161b22", "#30363d"
-TEXT, MUTED, BLUE, GREEN, YELLOW, RED = "#e6edf3", "#8b949e", "#58a6ff", "#3fb950", "#d29922", "#ff7b72"
-KEY, STR = "#79c0ff", "#a5d6ff"
+# Dark "royal / Dracula" red brand palette.
+BG, PANEL, BORDER = "#14060a", "#220b11", "#4a1d27"
+TEXT, MUTED = "#f4e9eb", "#b49aa0"
+BRAND, BRIGHT, PINK, ORANGE, RED = "#b3122e", "#ff5c74", "#ff79c6", "#ffb86c", "#ff5555"
+KEY, STR = PINK, "#f1fa8c"  # Dracula syntax colours
 SANS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
 MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace"
 SERIF = "Georgia, 'Times New Roman', serif"
@@ -87,10 +89,10 @@ def banner() -> str:
 
     bar = lambda x, y, w, c="#d0d7de", h=7: f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="3.5" fill="{c}"/>'  # noqa: E731
     paper = "".join([
-        on_paper("accent", f'<rect x="{px + 28}" y="{py + 26}" width="5" height="56" rx="2.5" fill="#2563eb"/>'),
+        on_paper("accent", f'<rect x="{px + 28}" y="{py + 26}" width="5" height="56" rx="2.5" fill="{BRAND}"/>'),
         on_paper("name", f'<text x="{px + 44}" y="{py + 56}" font-family="{SANS}" font-weight="700" font-size="28" fill="#111">Jane Doe</text>'),
-        on_paper("title", f'<text x="{px + 44}" y="{py + 78}" font-family="{SANS}" font-weight="600" font-size="14" fill="#2563eb">Senior Backend Engineer</text>'),
-        on_paper("heading", f'<text x="{px + 30}" y="{py + 116}" font-family="{SANS}" font-weight="700" font-size="11" letter-spacing="1.6" fill="#2563eb">EXPERIENCE</text>'),
+        on_paper("title", f'<text x="{px + 44}" y="{py + 78}" font-family="{SANS}" font-weight="600" font-size="14" fill="{BRAND}">Senior Backend Engineer</text>'),
+        on_paper("heading", f'<text x="{px + 30}" y="{py + 116}" font-family="{SANS}" font-weight="700" font-size="11" letter-spacing="1.6" fill="{BRAND}">EXPERIENCE</text>'),
         on_paper("role", f'<text x="{px + 30}" y="{py + 140}" font-family="{SANS}" font-weight="700" font-size="13" fill="#111">Senior Backend Engineer</text>'
                          f'<text x="{px + pw - 30}" y="{py + 140}" text-anchor="end" font-family="{SANS}" font-size="12" fill="#57606a">2022 – Present</text>'),
         on_paper("company", f'<text x="{px + 30}" y="{py + 159}" font-family="{SANS}" font-weight="600" font-size="12" fill="#24292f">Globex Payments</text>'),
@@ -100,20 +102,20 @@ def banner() -> str:
     ])
     done = start + len(yaml_lines) * step + 0.5
     badge = (f'<g opacity="0">{appear(done, C, HIDE, 10)}'
-             f'<rect x="{px + pw - 116}" y="{py + ph - 20}" width="132" height="40" rx="20" fill="{GREEN}"/>'
+             f'<rect x="{px + pw - 116}" y="{py + ph - 20}" width="132" height="40" rx="20" fill="{BRAND}"/>'
              f'<text x="{px + pw - 50}" y="{py + ph + 6}" text-anchor="middle" font-family="{SANS}" font-weight="700" '
-             f'font-size="16" fill="#0d1117">PDF ready ✓</text></g>')
+             f'font-size="16" fill="#ffffff">PDF ready ✓</text></g>')
 
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="cv-as-code: YAML in, PDF out. Your CV as code.">
   <defs>
-    <radialGradient id="glow" cx="80%" cy="0%" r="70%"><stop offset="0" stop-color="#1f6feb" stop-opacity=".35"/><stop offset="1" stop-color="#1f6feb" stop-opacity="0"/></radialGradient>
-    <linearGradient id="arrow" x1="0" x2="1"><stop offset="0" stop-color="{BLUE}" stop-opacity=".2"/><stop offset="1" stop-color="{BLUE}"/></linearGradient>
+    <radialGradient id="glow" cx="80%" cy="0%" r="70%"><stop offset="0" stop-color="{BRAND}" stop-opacity=".45"/><stop offset="1" stop-color="{BRAND}" stop-opacity="0"/></radialGradient>
+    <linearGradient id="arrow" x1="0" x2="1"><stop offset="0" stop-color="{BRIGHT}" stop-opacity=".2"/><stop offset="1" stop-color="{BRIGHT}"/></linearGradient>
   </defs>
   <rect width="{W}" height="{H}" rx="24" fill="{BG}"/>
   <rect width="{W}" height="{H}" rx="24" fill="url(#glow)"/>
   <rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="24" fill="none" stroke="{BORDER}"/>
 
-  <text x="60" y="86" font-family="{MONO}" font-weight="700" font-size="46" fill="{TEXT}">cv<tspan fill="{BLUE}">-as-</tspan>code</text>
+  <text x="60" y="86" font-family="{MONO}" font-weight="700" font-size="46" fill="{TEXT}">cv<tspan fill="{BRIGHT}">-as-</tspan>code</text>
   <text x="60" y="124" font-family="{SANS}" font-size="20" fill="{MUTED}">Your CV lives in YAML. Build a clean PDF. AI tailors the YAML to each job, fact-checked.</text>
 
   <rect x="60" y="170" width="560" height="262" rx="14" fill="{PANEL}" stroke="{BORDER}"/>
@@ -123,7 +125,7 @@ def banner() -> str:
 
   <g transform="translate(630 284)">
     <rect width="48" height="6" rx="3" fill="url(#arrow)"/>
-    <path d="M44 -7 L58 3 L44 13 Z" fill="{BLUE}"/>
+    <path d="M44 -7 L58 3 L44 13 Z" fill="{BRIGHT}"/>
     <animateTransform attributeName="transform" type="translate" values="626 284;636 284;626 284" dur="1.4s" repeatCount="indefinite"/>
   </g>
 
@@ -148,7 +150,7 @@ def demo() -> str:
 
     def prompt(row: int, at: float, cmd: str, secs: float, uid: str) -> None:
         out.append(f'<g opacity="0">{appear(at - 0.3, C, HIDE, 0)}<text x="{x0}" y="{y(row)}" font-family="{MONO}" '
-                   f'font-size="{size}" fill="{GREEN}">$</text></g>')
+                   f'font-size="{size}" fill="{BRIGHT}">$</text></g>')
         out.append(typed(cmd, x0 + 20, y(row), at, secs, C, HIDE, size, uid))
 
     # Output lines match what the CLI really prints.
@@ -158,10 +160,10 @@ def demo() -> str:
     prompt(4, 4.0, "cv-as-code tailor job.md --cv cv.yaml --letter cover_letter.yaml --out tailored/umbrella", 2.4, "c2")
     line(5, 6.8, "wrote tailored/umbrella/cv.yaml", TEXT)
     line(6, 7.0, "wrote tailored/umbrella/cover_letter.yaml", TEXT)
-    line(7, 7.9, "Check these before sending (possible invented or changed facts):", YELLOW)
-    line(8, 8.4, "  - numbers not in your originals (check metrics): 65%", YELLOW)
-    line(9, 8.7, "  - skills not in original: rust", YELLOW)
-    line(11, 9.8, "# the AI rewords. cv-as-code makes sure it doesn't invent.", BLUE)
+    line(7, 7.9, "Check these before sending (possible invented or changed facts):", ORANGE)
+    line(8, 8.4, "  - numbers not in your originals (check metrics): 65%", ORANGE)
+    line(9, 8.7, "  - skills not in original: rust", ORANGE)
+    line(11, 9.8, "# the AI rewords. cv-as-code makes sure it doesn't invent.", PINK)
 
     cursor_at = 10.4
     cursor = (f'<rect x="{x0}" y="{y(12) - 14}" width="9" height="18" fill="{TEXT}" opacity="0">'
