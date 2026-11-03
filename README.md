@@ -4,9 +4,9 @@
 
 <p align="center">
   <a href="https://github.com/whoisadityaj/cv-as-code/actions/workflows/ci.yml"><img src="https://github.com/whoisadityaj/cv-as-code/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
-  <img src="https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
-  <img src="https://img.shields.io/badge/AI-Claude%20%7C%20OpenAI-8A63D2" alt="Works with Claude or OpenAI">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-b3122e" alt="MIT license"></a>
+  <img src="https://img.shields.io/badge/python-3.10%2B-9b1b30?logo=python&logoColor=white" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/AI-Claude%20%7C%20OpenAI-5c0a1a" alt="Works with Claude or OpenAI">
 </p>
 
 <h1 align="center">cv-as-code</h1>
