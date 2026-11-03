@@ -13,14 +13,17 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-from cv_as_code.build import THEMES, build_file, theme_names
+from cv_as_code.build import THEMES, load_yaml, render, theme_names, write_pdf
 
 ROOT = Path(__file__).resolve().parent.parent
 EXAMPLES = ROOT / "examples"
 OUT = ROOT / "docs" / "images"
 
-DARK, DARK_2, LIGHT = (11, 16, 32), (24, 33, 60), (241, 244, 249)
-WHITE, INK, MUTED_DARK, MUTED_LIGHT = (255, 255, 255), (17, 24, 39), (148, 163, 184), (100, 116, 139)
+# Dark "royal / Dracula" red brand palette, with the light band kept for contrast.
+DARK, DARK_2, LIGHT = (20, 6, 10), (54, 12, 24), (241, 244, 249)
+WHITE, INK, MUTED_DARK, MUTED_LIGHT = (255, 255, 255), (17, 24, 39), (201, 166, 173), (100, 116, 139)
+BRAND, BRIGHT, BLUSH = (179, 18, 46), (255, 92, 116), (255, 150, 165)
+ACCENT = "#9b1b30"  # pages in the images are rendered with this accent
 PHOTO_ORDER = ["sidebar", "bold", "executive"]
 CLEAN_ORDER = ["modern", "minimal", "classic", "compact"]
 
@@ -28,8 +31,11 @@ CLEAN_ORDER = ["modern", "minimal", "classic", "compact"]
 # ----------------------------------------------------------------- rendering
 
 def snapshot(yaml_name: str, theme: str, tmp: Path, ats: bool = False) -> Image.Image:
-    out = tmp / f"{theme}{'-ats' if ats else ''}"
-    pdf = next(p for p in build_file(EXAMPLES / yaml_name, out, theme=theme, ats=ats) if p.suffix == ".pdf")
+    data = load_yaml(EXAMPLES / yaml_name)
+    data["accent"] = ACCENT
+    kind = "cover_letter" if "sender" in data else "cv"
+    pdf = tmp / f"{Path(yaml_name).stem}-{theme}{'-ats' if ats else ''}.pdf"
+    assert write_pdf(render(data, kind, theme=theme, ats=ats, base_dir=EXAMPLES), pdf), "PDF rendering failed"
     subprocess.run(["pdftoppm", "-png", "-r", "150", "-singlefile", str(pdf), str(pdf.with_suffix(""))], check=True)
     return Image.open(pdf.with_suffix(".png")).convert("RGB")
 
@@ -133,12 +139,12 @@ def showcase(shots: dict[str, Image.Image], letters: dict[str, Image.Image]) -> 
     light = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     ImageDraw.Draw(light).polygon([(W * 0.62, 0), (W, 0), (W, H), (W * 0.40, H)], fill=LIGHT + (255,))
     canvas.alpha_composite(light)
-    glow(canvas, (300, 260), 360, (59, 130, 246), 90)
-    glow(canvas, (1350, 760), 300, (124, 58, 237), 40)
+    glow(canvas, (300, 260), 360, BRAND, 120)
+    glow(canvas, (1350, 760), 300, BRIGHT, 45)
 
     d = ImageDraw.Draw(canvas)
     d.text((80, 70), "One YAML file.", font=font(54, bold=True), fill=WHITE)
-    d.text((80, 134), "Seven good-looking PDFs.", font=font(54, bold=True), fill=(147, 197, 253))
+    d.text((80, 134), "Seven good-looking PDFs.", font=font(54, bold=True), fill=BLUSH)
     d.text((W - 80, H - 60), "every page rendered by cv-as-code from examples/", font=font(20), fill=MUTED_LIGHT, anchor="rs")
 
     place(canvas, page(letters["bold"], 400), (470, 610), angle=8)
@@ -157,12 +163,12 @@ def gallery(shots: dict[str, Image.Image]) -> Image.Image:
     light_h = 150 + small_h + 110
     canvas = Image.new("RGBA", (W, dark_h + light_h), LIGHT + (255,))
     canvas.alpha_composite(vertical_gradient((W, dark_h), DARK, DARK_2))
-    glow(canvas, (W // 2, 120), 420, (59, 130, 246), 70)
+    glow(canvas, (W // 2, 120), 420, BRAND, 110)
 
     d = ImageDraw.Draw(canvas)
     d.text((pad, 52), "Photo themes", font=font(44, bold=True), fill=WHITE)
-    text_with_code(d, (pad, 106), ["Add", "photo: me.jpg", "to your YAML and pick one. ATS mode always leaves the photo out."],
-                   MUTED_DARK, (191, 219, 254), (30, 41, 70))
+    text_with_code(d, (pad, 106), ["Add", "photo: me.jpg", "and pick one. Shown with", f'accent: "{ACCENT}"', "and any colour works."],
+                   MUTED_DARK, (255, 190, 200), (70, 18, 32))
     gap = (W - 2 * pad - 3 * big_w) // 2
     for i, name in enumerate(PHOTO_ORDER):
         cx = pad + big_w // 2 + i * (big_w + gap)
