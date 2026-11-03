@@ -29,3 +29,4 @@
 .cv-header { border-left: 0; padding-left: 0; }
 .letter .sidebar, .letter .sidebar .name-stack, .letter .sidebar .tagline,
 .letter .sidebar .links a, .letter .sidebar .links a .icon { color: #000000; opacity: 1; }
+.photo { display: none; }

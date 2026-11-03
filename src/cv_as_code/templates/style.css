@@ -324,3 +324,23 @@ em     { font-style: italic; }
 .letter .body-col .recipient {
   margin: 0 0 12px 0;
 }
+
+/* ============================================================
+   Photo (only themes that support photos pass one in)
+   ============================================================ */
+
+.photo {
+  display: block;
+  width: 28mm;
+  height: 28mm;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.cv-header.has-photo, .has-photo .cv-header {
+  display: flex;
+  align-items: center;
+  gap: 6mm;
+  text-align: left;
+}
+.has-photo .cv-header .contact { text-align: left; }
+.letter .sidebar .photo { margin: 0 0 8mm 0; }

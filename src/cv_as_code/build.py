@@ -5,6 +5,7 @@ anything else with a top-level `name:` is treated as a CV.
 """
 from __future__ import annotations
 
+import base64
 import datetime as _dt
 import re
 from dataclasses import dataclass
@@ -189,10 +190,44 @@ def stylesheet(theme: str, ats: bool, accent: str | None, kind: str = "cv") -> s
     return "\n".join(css)
 
 
+PHOTO_TYPES = {
+    ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
+    ".webp": "image/webp", ".gif": "image/gif", ".svg": "image/svg+xml",
+}
+
+
+def photo_src(value: str, base_dir: Path | None = None) -> str:
+    """Turn a `photo:` value into an <img> src.
+
+    Local files (relative to the YAML file) are embedded as data URIs so the
+    HTML and PDF are self-contained. URLs are passed through.
+    """
+    s = str(value).strip()
+    if s.startswith(("http://", "https://", "data:")):
+        return s
+    path = Path(s).expanduser()
+    if not path.is_absolute():
+        path = (base_dir or Path.cwd()) / path
+    if not path.is_file():
+        raise ValueError(f"photo not found: {path}")
+    mime = PHOTO_TYPES.get(path.suffix.lower())
+    if not mime:
+        raise ValueError(f"unsupported photo type {path.suffix!r}; use jpg, png, webp or svg")
+    return f"data:{mime};base64,{base64.b64encode(path.read_bytes()).decode()}"
+
+
 def render(
-    data: dict[str, Any], kind: str, page_size: str = "", theme: str | None = None, ats: bool | None = None
+    data: dict[str, Any],
+    kind: str,
+    page_size: str = "",
+    theme: str | None = None,
+    ats: bool | None = None,
+    base_dir: Path | None = None,
 ) -> str:
-    """Render one document. CLI options (theme, ats) override the YAML settings."""
+    """Render one document. CLI options (theme, ats) override the YAML settings.
+
+    `base_dir` is where relative paths in the YAML (like `photo:`) are looked up.
+    """
     ats = bool(data.get("ats")) if ats is None else ats
     theme = theme or data.get("theme") or "classic"
     spec = get_theme(theme)
@@ -207,6 +242,9 @@ def render(
         "photo": None,
         "stacked_contacts": layout == "sidebar",
     }
+    photo = data.get("photo") if kind == "cv" else (data.get("sender") or {}).get("photo")
+    if photo and spec.photo and not ats:  # photos never go in ATS output
+        ctx["photo"] = photo_src(photo, base_dir)
     if kind == "cover_letter":
         raw_date = data.get("date") or "auto"
         if str(raw_date).strip().lower() == "auto":
@@ -251,7 +289,7 @@ def build_file(
     """Render one YAML file. Returns the files written (HTML first)."""
     data = load_yaml(path)
     kind = detect_kind(data)
-    html = render(data, kind, page_size=resolve_page_size(page_size), theme=theme, ats=ats)
+    html = render(data, kind, page_size=resolve_page_size(page_size), theme=theme, ats=ats, base_dir=path.parent)
 
     out_dir.mkdir(parents=True, exist_ok=True)
     stem = output_stem(data, kind)

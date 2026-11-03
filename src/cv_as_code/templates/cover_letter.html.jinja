@@ -9,9 +9,10 @@
 </head>
 <body>
 
-<div class="letter">
+<div class="letter theme-{{ theme }}{% if photo %} has-photo{% endif %}">
 
   <aside class="sidebar">
+    {% if photo %}<img class="photo" src="{{ photo }}" alt="Photo of {{ data.sender.name }}" />{% endif %}
     <h1 class="name-stack">
       {%- set parts = data.sender.name.split(' ', 1) -%}
       <span class="first">{{ parts[0] }}</span>
