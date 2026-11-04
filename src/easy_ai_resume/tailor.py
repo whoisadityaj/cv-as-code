@@ -201,10 +201,11 @@ def check_facts(
         if (ed.get("school"), ed.get("degree"), ed.get("start"), ed.get("end")) not in schools:
             warns.append(f"education changed or added: {ed.get('school')}")
 
-    projects = {p.get("name") for p in _items(cv, "projects")}
-    for p in _items(new_cv, "projects"):
-        if p.get("name") not in projects:
-            warns.append(f"project not in original: {p.get('name')}")
+    for section, label in (("startups", "startup"), ("projects", "project")):
+        names = {p.get("name") for p in _items(cv, section)}
+        for p in _items(new_cv, section):
+            if p.get("name") not in names:
+                warns.append(f"{label} not in original: {p.get('name')}")
 
     added = _skills(new_cv) - _skills(cv)
     if added:

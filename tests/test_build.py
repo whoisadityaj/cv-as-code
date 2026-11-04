@@ -161,3 +161,12 @@ def test_bold_and_sidebar_cover_letters_look_different(letter):
     bold = render(letter, "cover_letter", theme="bold", base_dir=EXAMPLES)
     assert "linear-gradient" in sidebar  # a coloured column down the side
     assert "linear-gradient" not in bold and "border-bottom: 1.5mm solid var(--accent)" in bold  # a header band
+
+
+@pytest.mark.parametrize("theme", ["classic", "sidebar"])
+def test_startups_come_before_projects(cv, theme):
+    cv["startups"] = [{"name": "Hush Mouse", "links": [{"label": "Live", "url": "https://hushmouse.com"}],
+                       "bullets": ["Built it."]}]
+    html = render(cv, "cv", theme=theme, base_dir=EXAMPLES)
+    assert "<h2>Startups</h2>" in html and html.index("Hush Mouse") < html.index("<h2>Projects</h2>")
+    assert 'href="https://hushmouse.com"' in html

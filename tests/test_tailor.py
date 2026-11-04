@@ -135,3 +135,10 @@ def test_ai_errors_become_a_clear_message(monkeypatch):
     monkeypatch.setattr(anthropic, "Anthropic", Boom)
     with pytest.raises(t.TailorError, match="request failed"):
         t.call_anthropic("prompt", None)
+
+
+def test_check_facts_flags_invented_startups(cv, letter):
+    cv["startups"] = [{"name": "Hush Mouse"}]
+    new_cv = copy.deepcopy(cv)
+    new_cv["startups"].append({"name": "Unicorn AI"})
+    assert "startup not in original: Unicorn AI" in t.check_facts(cv, new_cv, letter, letter)

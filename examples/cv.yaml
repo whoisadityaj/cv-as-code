@@ -80,6 +80,14 @@ education:
     start: "2014"
     end: "2018"
 
+# Optional. Your own companies, shown before projects with the same fields:
+# startups:
+#   - name: Acme Cloud
+#     links:
+#       - { label: Live, url: "https://example.com" }
+#     bullets:
+#       - Founded and built a hosted job queue; 120 paying teams.
+
 projects:
   - name: tinyqueue
     stack: Go

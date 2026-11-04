@@ -128,11 +128,12 @@
   {% endif %}
 {%- endmacro -%}
 
-{%- macro projects() -%}
-  {% if data.projects %}
-  <section class="section projects">
-    <h2>Projects</h2>
-    {% for p in data.projects %}
+{#- `startups:` and `projects:` share one layout: name | stack | links, then bullets -#}
+{%- macro project_list(key, title) -%}
+  {% if data[key] %}
+  <section class="section projects {{ key }}">
+    <h2>{{ title }}</h2>
+    {% for p in data[key] %}
     <div class="entry">
       <div class="row1">
         <div class="role">
@@ -188,7 +189,8 @@
   <main class="main">
     {{ summary() }}
     {{ experience() }}
-    {{ projects() }}
+    {{ project_list('startups', 'Startups') }}
+    {{ project_list('projects', 'Projects') }}
     {{ simple_list('publications', 'Publications') }}
   </main>
 </div>
@@ -206,7 +208,8 @@
 {{ skills() }}
 {{ experience() }}
 {{ education() }}
-{{ projects() }}
+{{ project_list('startups', 'Startups') }}
+{{ project_list('projects', 'Projects') }}
 {{ simple_list('publications', 'Publications') }}
 {{ simple_list('awards', 'Awards') }}
 {{ simple_list('certifications', 'Certifications') }}
