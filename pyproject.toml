@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "easy-ai-resume"
-version = "0.9.0"
+version = "0.10.0"
 description = "Write your CV once in YAML, render a clean PDF, and tailor it to any job with AI."
 readme = "README.md"
 license = "MIT"

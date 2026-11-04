@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.0 — 2026-11-05
 
 - **Fixed:** links in cover letter PDFs (LinkedIn, GitHub, website) couldn't be clicked, in any theme.
 - **Fixed:** a large photo made each PDF over 2 MB, more than some job portals accept. Images are now

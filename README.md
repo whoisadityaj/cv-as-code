@@ -31,7 +31,7 @@
 
 ```bash
 brew install uv pango
-uv tool install "easy-ai-resume[ai] @ https://github.com/whoisadityaj/easy-ai-resume/archive/refs/tags/v0.9.0.zip"
+uv tool install "easy-ai-resume[ai] @ https://github.com/whoisadityaj/easy-ai-resume/archive/refs/tags/v0.10.0.zip"
 ```
 
 - **Ubuntu / Debian:** `sudo apt install libpango-1.0-0 libpangoft2-1.0-0`, install [uv](https://docs.astral.sh/uv/getting-started/installation/), then the `uv tool install` line.
