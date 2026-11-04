@@ -12,3 +12,5 @@ build/
 # Your own CV data and outputs stay local
 output/
 tailored/
+/cv.yaml
+/cover_letter.yaml
