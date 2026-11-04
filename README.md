@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <a href="#-step-by-step-guide">🧭 Guide</a> ·
+  <a href="#-get-started-in-2-steps">🧭 Get started</a> ·
   <a href="#-themes">🎨 Themes</a> ·
   <a href="#-tailor-to-a-job-with-ai">🤖 AI tailoring</a> ·
   <a href="#-build-in-github-actions">🚀 GitHub Action</a>
@@ -38,70 +38,43 @@
 - 🤖 **AI tailoring, fact-checked.** AI edits your YAML (never the PDF). Any new number, date, employer, school or skill gets flagged.
 - 🚀 **GitHub Action.** Push your YAML, get fresh PDFs.
 
-## 🧭 Step-by-step guide
+## 🧭 Get started in 2 steps
 
-No coding needed. About 10 minutes.
+### 1. Install (once)
 
-> **Know Python?** `pip install https://github.com/whoisadityaj/easy-ai-resume/archive/refs/heads/main.zip`,
-> then `easy-ai-resume init` and `easy-ai-resume build`.
-
-### 1. Check Python
-
-In **Terminal** (Mac) or **PowerShell** (Windows):
+**Mac** ([Homebrew](https://brew.sh) needed):
 
 ```bash
-python3 --version
+brew install uv pango
+uv tool install "easy-ai-resume[ai] @ https://github.com/whoisadityaj/easy-ai-resume/archive/refs/heads/main.zip"
 ```
 
-You need **3.10+**. Otherwise install it from [python.org](https://www.python.org/downloads/).
-On Windows, tick **"Add Python to PATH"** and type `python` instead of `python3`.
+**Ubuntu / Debian:** `sudo apt install libpango-1.0-0 libpangoft2-1.0-0`, install [uv](https://docs.astral.sh/uv/getting-started/installation/), then run the `uv tool install` line above.
+**Windows:** install [uv](https://docs.astral.sh/uv/getting-started/installation/) and [Pango](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#windows), then the same `uv tool install` line.
 
-### 2. Install the PDF helper (Pango)
+uv sets up Python for you. `easy-ai-resume: command not found`? Run `uv tool update-shell` and open a new terminal.
 
-- **Mac:** install [Homebrew](https://brew.sh), then `brew install pango`
-- **Ubuntu / Debian:** `sudo apt install libpango-1.0-0 libpangoft2-1.0-0`
-- **Windows:** see [WeasyPrint's Windows steps](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#windows)
-
-Stuck? Skip it. Build with `--html`, open the file in a browser, and **Print → Save as PDF**.
-
-### 3. Install easy-ai-resume
-
-Make one folder for your resume. The tool, your YAML files and your PDFs all live in it.
-`cv-env` (inside it) holds the tool and doesn't touch anything else.
+### 2. Make your resume
 
 ```bash
 mkdir my-cv && cd my-cv
-python3 -m venv cv-env
-source cv-env/bin/activate        # Windows: cv-env\Scripts\activate
-pip install https://github.com/whoisadityaj/easy-ai-resume/archive/refs/heads/main.zip
-```
-
-> New terminal? Run the `activate` line again first.
-
-### 4. Get the starter files
-
-In the same `my-cv` folder:
-
-```bash
 easy-ai-resume init
-```
-
-You get `cv.yaml`, `cover_letter.yaml`, `job.md` (a job post for AI tailoring) and `jane.png` (a sample photo).
-
-### 5. Make your PDFs
-
-```bash
 easy-ai-resume build
-open output/Jane_Doe_CV.pdf       # Windows: start output\Jane_Doe_CV.pdf
 ```
 
-With no file names, `build` uses `cv.yaml` and `cover_letter.yaml` in this folder. Add `--html` to also get the HTML.
+`init` makes an `input/` folder with a sample CV and cover letter. `build` turns them into PDFs in `output/`:
 
-> Run every command inside `my-cv`, with `cv-env` activated (step 3).
+```text
+my-cv/
+├── input/     ← cv.yaml, cover_letter.yaml, job.md, jane.png (you edit these)
+└── output/    ← Jane_Doe_CV.pdf, Jane_Doe_Cover_Letter.pdf
+```
 
-### 6. Add your details
+Now put your own details in `input/cv.yaml` and `input/cover_letter.yaml` and run `easy-ai-resume build` again.
 
-Open `cv.yaml` in any text editor and replace Jane's details:
+## ✏️ Make it yours
+
+**Edit the YAML** in any text editor:
 
 ```yaml
 name: Your Name                  # "label: value", one per line
@@ -115,41 +88,14 @@ experience:
       - Led the redesign of the **checkout page**   # **text** = bold
 ```
 
-- Keep the structure. Delete sections you don't need.
-- Quote values with `:` or `#`: `title: "Lead: Platform"`.
-- Rebuild after each change. The PDF is named after you, e.g. `output/Your_Name_CV.pdf`.
+Delete sections you don't need. Quote values with `:` or `#`: `title: "Lead: Platform"`.
 
-Do the same for `cover_letter.yaml`.
+**Pick a look:** set `theme:` in `cv.yaml`, or try one with `easy-ai-resume build --theme sidebar`.
+**Photo:** put it in `input/` and set `photo: me.jpg` (`sidebar`, `bold` and `executive` show it).
+**Job portal?** `easy-ai-resume build --ats` makes a plain version hiring software can read.
+**No PDF?** If Pango won't install, use `build --html`, open the file in a browser and **Print → Save as PDF**.
 
-### 7. Pick a look
-
-Change `theme:` in `cv.yaml`, or try one without editing:
-
-```bash
-easy-ai-resume build --theme sidebar
-```
-
-**Photo:** put it in `my-cv/` and set `photo: me.jpg`. Only `sidebar`, `bold` and `executive` show it. No photo? Delete the line.
-
-### 8. Tailor to a job (optional)
-
-1. Paste the job post into `job.md`.
-2. Get an API key from [Anthropic](https://console.anthropic.com) (or OpenAI). Each run uses a little API credit.
-3. Install the AI add-on, set your key, run it:
-
-   ```bash
-   pip install "easy-ai-resume[ai] @ https://github.com/whoisadityaj/easy-ai-resume/archive/refs/heads/main.zip"
-   export ANTHROPIC_API_KEY=your-key-here      # Windows: $env:ANTHROPIC_API_KEY="your-key-here"
-   easy-ai-resume tailor job.md --build
-   ```
-
-Your originals stay untouched. The tailored files and PDFs go to `tailored/job/`.
-Read any **"Check these before sending"** warnings: the AI may have made those up.
-
-### 9. Before you send it
-
-- Job portal? Make a plain version hiring software can read: `easy-ai-resume build --ats`
-- Check dates, numbers and contact details yourself.
+Always check dates, numbers and contact details yourself before sending.
 
 ## 🎨 Themes
 
@@ -194,9 +140,11 @@ The AI never touches the PDF. It reads your YAML and the job post, and writes a 
 cv.yaml + job.md  ──AI──▶  tailored/job/cv.yaml  ──fact check──▶  you review  ──build──▶  PDF
 ```
 
+Paste the job post into `input/job.md` and get an API key from [Anthropic](https://console.anthropic.com) (or OpenAI). Each run uses a little API credit.
+
 ```bash
 export ANTHROPIC_API_KEY=...        # or OPENAI_API_KEY plus OPENAI_MODEL
-easy-ai-resume tailor job.md --build
+easy-ai-resume tailor input/job.md --build
 ```
 
 - Output goes to `tailored/<job file name>/`. Change it with `--out`.
@@ -228,8 +176,7 @@ Save each job post as its own file and tailor each one:
 
 ```text
 my-cv/
-├── cv-env/                     ← the tool (step 3)
-├── cv.yaml, cover_letter.yaml
+├── input/                      ← cv.yaml, cover_letter.yaml
 ├── jobs/acme-backend.md        ← one file per job post
 └── tailored/acme-backend/      ← tailored YAML + PDFs
 ```
@@ -241,8 +188,8 @@ easy-ai-resume tailor jobs/acme-backend.md --build
 Want other file names or folders? Add an optional `easy-ai-resume.yaml`:
 
 ```yaml
-cv: data/cv.yaml                 # default: cv.yaml
-letter: data/cover_letter.yaml   # default: cover_letter.yaml
+cv: data/cv.yaml                 # default: input/cv.yaml
+letter: data/cover_letter.yaml   # default: input/cover_letter.yaml
 output: output                   # where build writes
 tailored: applications           # where tailor writes
 build: true                      # make PDFs after tailoring
@@ -255,9 +202,9 @@ Tip: keep the tailored YAML so you know what you sent where. The PDFs can always
 Keep your CV in a private repo. Copy [`examples/github-workflow.yml`](examples/github-workflow.yml) to `.github/workflows/cv.yml`:
 
 ```yaml
-- uses: whoisadityaj/easy-ai-resume@v0.7.1
+- uses: whoisadityaj/easy-ai-resume@v0.8.0
   with:
-    files: cv.yaml cover_letter.yaml
+    files: input/cv.yaml input/cover_letter.yaml
     # theme: modern
     # ats: "true"
 - uses: actions/upload-artifact@v4
