@@ -19,11 +19,11 @@ build: true
 
 @pytest.fixture
 def project(tmp_path, monkeypatch):
-    """A CV folder laid out like a real one: data/, jds/ and a cv-as-code.yaml."""
+    """A CV folder laid out like a real one: data/, jds/ and an easy-ai-resume.yaml."""
     init(tmp_path / "data")
     (tmp_path / "jds").mkdir()
     (tmp_path / "data" / "job.md").rename(tmp_path / "jds" / "Acme Senior SDET.md")
-    (tmp_path / "cv-as-code.yaml").write_text(CONFIG)
+    (tmp_path / "easy-ai-resume.yaml").write_text(CONFIG)
     monkeypatch.chdir(tmp_path)
     return tmp_path
 
@@ -46,7 +46,7 @@ def test_no_config_means_defaults(tmp_path, monkeypatch):
 
 
 def test_unknown_setting_is_an_error(project, capsys):
-    (project / "cv-as-code.yaml").write_text(CONFIG + "colour: red\n")
+    (project / "easy-ai-resume.yaml").write_text(CONFIG + "colour: red\n")
     assert cli.main(["build", "--html-only"]) == 1
     assert "unknown setting(s) colour" in capsys.readouterr().err
 
@@ -59,7 +59,7 @@ def test_build_without_paths_uses_the_project_file(project):
 def test_build_without_paths_or_project_file(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
     assert cli.main(["build"]) == 1
-    assert "cv-as-code.yaml" in capsys.readouterr().err
+    assert "easy-ai-resume.yaml" in capsys.readouterr().err
 
 
 def _fake(monkeypatch, cv, letter):
@@ -89,3 +89,9 @@ def test_tailor_needs_cv_and_letter_from_somewhere(tmp_path, monkeypatch, capsys
     (tmp_path / "job.md").write_text("a job")
     assert cli.main(["tailor", "job.md"]) == 1
     assert "--cv and --letter" in capsys.readouterr().err
+
+
+def test_old_cv_as_code_project_file_still_works(project):
+    (project / "easy-ai-resume.yaml").rename(project / "cv-as-code.yaml")
+    assert load_project().found
+    assert cli.main(["build", "--html-only"]) == 0

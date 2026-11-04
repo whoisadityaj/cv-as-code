@@ -1,4 +1,4 @@
-"""Optional project file, `cv-as-code.yaml`, so commands work without paths.
+"""Optional project file, `easy-ai-resume.yaml`, so commands work without paths.
 
     cv: data/cv.yaml                 # used by `build` and `tailor`
     letter: data/cover_letter.yaml
@@ -16,7 +16,8 @@ from pathlib import Path
 
 import yaml
 
-CONFIG_NAME = "cv-as-code.yaml"
+CONFIG_NAME = "easy-ai-resume.yaml"
+LEGACY_CONFIG_NAMES = ("cv-as-code.yaml",)  # still read, from before the rename
 KEYS = ("cv", "letter", "output", "tailored", "build")
 
 
@@ -27,13 +28,14 @@ class Project:
     output: Path = Path("output")
     tailored: Path = Path("tailored")
     build: bool = False
-    found: bool = False  # True when settings came from a cv-as-code.yaml
+    found: bool = False  # True when settings came from a project file
 
 
 def load_project(folder: Path | None = None) -> Project:
-    """Read cv-as-code.yaml from `folder` (default: the current folder), or return defaults."""
-    path = (folder or Path.cwd()) / CONFIG_NAME
-    if not path.is_file():
+    """Read the project file from `folder` (default: the current folder), or return defaults."""
+    folder = folder or Path.cwd()
+    path = next((folder / n for n in (CONFIG_NAME, *LEGACY_CONFIG_NAMES) if (folder / n).is_file()), None)
+    if path is None:
         return Project()
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     if not isinstance(data, dict):
