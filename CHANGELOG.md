@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- `build --ats` writes to `output/ats/`, so it no longer replaces your styled PDFs (`--out` still wins).
+- `--html` also covers the no-Pango case: you get the HTML file with a warning instead of an error.
+  `--html-only` and `tailor --strict` still work but are no longer listed.
+- Codex default model: gpt-6.1-sol at medium effort.
+
 ## 0.12.0 — 2026-11-05
 
 - Better tailoring by default: Claude Code uses Opus at medium effort, Codex gpt-5.6-terra at medium,

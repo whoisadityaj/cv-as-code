@@ -206,7 +206,7 @@ def test_subscription_tools_default_to_a_capable_model_at_medium_effort(monkeypa
 
     seen = _fake_run(monkeypatch, write="{}")
     t.call_codex_cli("PROMPT", None, effort="low")
-    assert 'model_reasoning_effort="low"' in seen["cmd"] and "gpt-5.6-terra" in seen["cmd"]
+    assert 'model_reasoning_effort="low"' in seen["cmd"] and "gpt-6.1-sol" in seen["cmd"]
     assert "opus, medium effort" in t.describe("claude")
 
 

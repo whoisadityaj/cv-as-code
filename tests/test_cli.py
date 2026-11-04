@@ -29,7 +29,7 @@ def test_build_missing_file(tmp_path, capsys):
 def test_build_fails_when_pdf_cannot_be_made(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr("easy_ai_resume.build.write_pdf", lambda html, out: False)
     assert main(["build", str(EXAMPLES / "cv.yaml"), "--out", str(tmp_path)]) == 1
-    assert "--html-only" in capsys.readouterr().err  # --html alone still needs the PDF
+    assert "Run again with --html" in capsys.readouterr().err
     assert not (tmp_path / "Jane_Doe_CV.html").exists()  # no HTML unless asked for
 
 
@@ -95,3 +95,17 @@ def test_tailor_ats_builds_plain_pdfs(tmp_path, monkeypatch, cv, letter):
             "--letter", str(EXAMPLES / "cover_letter.yaml"), "--out", str(tmp_path), "--provider", "anthropic"]
     assert main(args + ["--ats"]) == 0  # --ats alone is enough to build
     assert len(seen) == 2 and all('class="photo"' not in html and "Arial" in html for html in seen)
+
+
+def test_html_without_pdf_still_succeeds(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr("easy_ai_resume.build.write_pdf", lambda html, out: False)  # no Pango
+    assert main(["build", str(EXAMPLES / "cv.yaml"), "--out", str(tmp_path), "--html"]) == 0
+    assert (tmp_path / "Jane_Doe_CV.html").exists() and "Print -> Save as PDF" in capsys.readouterr().err
+
+
+def test_ats_goes_to_its_own_folder(tmp_path, monkeypatch):
+    (tmp_path / "input").mkdir()
+    (tmp_path / "input" / "cv.yaml").write_text((EXAMPLES / "cv.yaml").read_text())
+    monkeypatch.chdir(tmp_path)
+    assert main(["build", "--ats", "--html-only"]) == 0
+    assert (tmp_path / "output" / "ats" / "Jane_Doe_CV.html").exists()  # styled PDFs in output/ stay

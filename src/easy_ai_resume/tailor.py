@@ -134,7 +134,7 @@ def _run(name: str, cmd: list[str], cwd: str, stdin: str | None = None) -> str:
 # tool's own default model is used instead.
 DEFAULT_MODELS = {
     "claude": ("opus", "medium"),  # always the latest Opus
-    "codex": ("gpt-5.6-terra", "medium"),  # the balanced tier ChatGPT plans can use
+    "codex": ("gpt-6.1-sol", "medium"),  # the latest mid-tier model
     "opencode": ("opencode-go/deepseek-v4.1-flash", "high"),  # newest DeepSeek; efforts: high, max
 }
 MODEL_ERROR = re.compile(r"model|variant", re.IGNORECASE)

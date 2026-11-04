@@ -101,7 +101,7 @@ Your CV and cover letter PDFs are in `output/`, in the default look: `classic`, 
 4. **For job portals**, also make a plain version that hiring software reads well ([why](#-ats-mode-for-job-portals)):
 
    ```bash
-   easy-ai-resume build --ats --out output/ats
+   easy-ai-resume build --ats              # goes to output/ats/, next to your styled PDFs
    ```
 
 ### 5. Tailor to a job (optional, uses AI)
@@ -171,7 +171,7 @@ Every theme uses the deep red in the pictures (`#9b1b30`) unless you set `accent
 | `minimal` | Light type, labels in the margin | ❌ |
 | `classic` (default) | Serif, centred header | ❌ |
 
-No PDF because Pango won't install? `easy-ai-resume build --html-only`, open the HTML file in a browser, **Print → Save as PDF**.
+No PDF because Pango won't install? `easy-ai-resume build --html`, open the HTML file in a browser, **Print → Save as PDF**.
 
 ## 🤖 ATS mode (for job portals)
 
@@ -204,15 +204,14 @@ can read it. Try the same with `sidebar` and you'll see the two columns mixed to
 |---|---|---|
 | `--theme sidebar` | build, tailor | Use this theme for this run |
 | `--accent "#0f766e"` | build, tailor | Use this colour for this run (default: red `#9b1b30`) |
-| `--ats` | build, tailor | Plain ATS-friendly PDFs |
+| `--ats` | build, tailor | Plain ATS-friendly PDFs (`build` puts them in `output/ats/`) |
 | `--page-size fit` | build | a4, letter, legal, `fit` (one page exactly as tall as the content), or a CSS size like "210mm 380mm" |
 | `--out folder` | build, tailor | Write the files somewhere else |
-| `--html-only` / `--html` | build | Write an HTML file instead of / as well as the PDF |
+| `--html` | build | Also write an HTML file (works even when the PDF can't be made) |
 | `--provider claude` | tailor | Use this AI: `claude`, `codex`, `opencode` (subscriptions), `anthropic`, `openai` (API keys). Default: the first that works |
-| `--model <name>` | tailor | Model for that AI. Defaults: Claude `opus`, Codex `gpt-5.6-terra`, opencode `opencode-go/deepseek-v4.1-flash` (needed for `openai`) |
+| `--model <name>` | tailor | Model for that AI. Defaults: Claude `opus`, Codex `gpt-6.1-sol`, opencode `opencode-go/deepseek-v4.1-flash` (needed for `openai`) |
 | `--effort medium` | tailor | How hard it thinks: low, medium, high, max. Default: medium (opencode: high) |
 | `--force` | init, tailor | Overwrite files from an earlier run |
-| `--strict` | tailor | Exit with code 2 when the fact check warns (for scripts) |
 
 `easy-ai-resume build --help` and `easy-ai-resume tailor --help` list everything.
 
