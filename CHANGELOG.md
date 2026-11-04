@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.9.0 — 2026-11-04
+
+- **Fixed:** `tailor --build` crashed with a photo theme (the tailored copy couldn't find the photo).
+  The tailored YAML now points to your original photo.
+- **Fixed:** a wrong or missing API key, no credit or no internet now prints one clear line instead of
+  a Python traceback.
+- **Fixed:** when the PDF can't be made, the advice is now `--html-only` (`--html` still needs the PDF).
+- New `--accent` option on `build` and `tailor`, e.g. `--accent "#9b1b30"` for the red in the README pictures.
+- A photo theme (sidebar, bold, executive) without a `photo:` line now prints a note on how to add one.
+  `photo: none` means no photo and hides the note.
+- `tailor` takes `--theme`, `--accent` and `--ats`, and makes the PDFs when any of them is given.
+- README: themes are part of step 3, tailoring is step 4 with a plain-words explanation, plus an
+  ATS section and a table of commands and options.
+
 ## 0.8.0 — 2026-11-04
 
 - `init` now puts your files in an `input/` folder, and `build` / `tailor` look there first.
