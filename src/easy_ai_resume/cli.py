@@ -36,6 +36,9 @@ def cmd_build(args: argparse.Namespace) -> int:
               "Run `easy-ai-resume init` to create them, or name the YAML files to build.", file=sys.stderr)
         return 1
     out = args.out or project.output
+    from .ask_photo import offer_photo
+
+    offer_photo(files, args.theme, True if args.ats else None)  # only asks in a terminal
     missing_pdf = False
     for path in files:
         try:
