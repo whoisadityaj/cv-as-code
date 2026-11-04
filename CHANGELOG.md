@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.9.0 — 2026-11-04
+## 0.9.0 — 2026-11-05
 
 - **Fixed:** `tailor --build` crashed with a photo theme (the tailored copy couldn't find the photo).
   The tailored YAML now points to your original photo.
@@ -9,11 +9,13 @@
 - **Fixed:** when the PDF can't be made, the advice is now `--html-only` (`--html` still needs the PDF).
 - Every theme now uses the deep red from the README pictures (`#9b1b30`) by default, so you get what
   you see there. `accent:` in the YAML or the new `--accent` option (`build` and `tailor`) changes it.
-- A photo theme (sidebar, bold, executive) without a `photo:` line now prints a note on how to add one.
-  `photo: none` means no photo and hides the note.
+- A photo theme (sidebar, bold, executive) without a `photo:` line now **asks for your photo** in the
+  terminal: drag it in, and it's copied to `input/` and added to both YAML files. Enter alone saves
+  `photo: none`. Outside a terminal (scripts, GitHub Actions) it prints a note instead.
+- `init` no longer copies Jane's sample photo, so a photo theme asks for yours.
 - `tailor` takes `--theme`, `--accent` and `--ats`, and makes the PDFs when any of them is given.
-- README: themes are part of step 3, tailoring is step 4 with a plain-words explanation, plus an
-  ATS section and a table of commands and options.
+- README: numbered steps for picking a theme and adding your photo, tailoring as its own step with a
+  plain-words explanation, plus an ATS section and a table of commands and options.
 
 ## 0.8.0 — 2026-11-04
 

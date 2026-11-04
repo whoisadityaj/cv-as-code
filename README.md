@@ -46,7 +46,7 @@ mkdir my-cv && cd my-cv
 easy-ai-resume init
 ```
 
-This makes `input/` with a sample `cv.yaml`, `cover_letter.yaml`, `job.md` and photo. Replace the sample details with yours:
+This makes `input/` with a sample `cv.yaml`, `cover_letter.yaml` and `job.md`. Replace the sample details with yours:
 
 ```yaml
 name: Your Name                  # "label: value", one per line
@@ -61,27 +61,50 @@ experience:
 
 Delete sections you don't need. Quote values containing `:` or `#`: `title: "Lead: Platform"`.
 
-### 3. Make your PDFs and pick a look
+### 3. Make your PDFs
 
 ```bash
-easy-ai-resume build                                      # PDFs in output/
-easy-ai-resume build --theme sidebar                      # try a theme: photo + colour panel
-easy-ai-resume build --theme sidebar --accent "#0f766e"   # same theme in teal (default: red)
-easy-ai-resume build --ats                                # plain version for job portals
+easy-ai-resume build
 ```
 
-Like one? Put it in **both** `input/cv.yaml` and `input/cover_letter.yaml` so plain `build` uses it:
+Your CV and cover letter PDFs are in `output/`, in the default look: `classic`, in red.
 
-```yaml
-theme: sidebar
-# accent: "#0f766e" # optional, any hex colour; default is the red in the pictures
-photo: me.jpg       # put the photo in input/ (photo themes only); `photo: none` for no photo
-page: a4            # a4, letter, legal, single, single-tall, or a CSS size like "210mm 380mm"
-```
+### 4. Pick a look and add your photo (optional)
 
-In the cover letter, `photo:` goes under `sender:`. All themes are [below](#-themes).
+1. **Try a theme.** Each run replaces the PDFs in `output/`, so try as many as you like ([all themes](#-themes)):
 
-### 4. Tailor to a job (optional, uses AI)
+   ```bash
+   easy-ai-resume build --theme sidebar
+   ```
+
+2. **Add your photo.** `sidebar`, `bold` and `executive` show one. The first time you use one of them, `build` asks:
+
+   ```text
+   The sidebar theme shows a photo, but cv.yaml and cover_letter.yaml have none yet.
+   Drag your photo into this window (or type its path) and press Enter.
+   Just press Enter for no photo:
+   ```
+
+   Drag your photo file (jpg or png) from Finder or Explorer into the terminal window and press **Enter**.
+   It's copied into `input/` and a `photo:` line is added to both YAML files, so it never asks again.
+   Pressing Enter alone saves `photo: none` (no photo); change that line later to add one.
+
+3. **Keep the theme.** Add it near the top of **both** `input/cv.yaml` and `input/cover_letter.yaml`,
+   so plain `easy-ai-resume build` uses it without `--theme`:
+
+   ```yaml
+   theme: sidebar
+   # accent: "#0f766e"   # optional: any hex colour instead of the default red
+   # page: a4            # a4 (default), letter, legal, single, single-tall, or "210mm 380mm"
+   ```
+
+4. **For job portals**, also make a plain version that hiring software reads well ([why](#-ats-mode-for-job-portals)):
+
+   ```bash
+   easy-ai-resume build --ats --out output/ats
+   ```
+
+### 5. Tailor to a job (optional, uses AI)
 
 Paste the job post into `input/job.md`, then:
 
