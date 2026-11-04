@@ -49,6 +49,16 @@ class TailorError(RuntimeError):
 
 # ----------------------------------------------------------------- LLM calls
 
+KEY_HINT = (
+    "Check your API key (ANTHROPIC_API_KEY or OPENAI_API_KEY), your account's credit, "
+    "and your internet connection."
+)
+
+
+def _short(error: Exception) -> str:
+    return " ".join(str(error).split())[:300]
+
+
 def pick_provider(provider: str = "auto") -> str:
     if provider != "auto":
         return provider
@@ -64,31 +74,37 @@ def call_anthropic(prompt: str, model: str | None) -> str:
         import anthropic  # type: ignore
     except ImportError as e:
         raise TailorError("install the AI extra: pip install 'easy-ai-resume[ai]'") from e
-    resp = anthropic.Anthropic().messages.create(
-        model=model or os.environ.get("ANTHROPIC_MODEL") or DEFAULT_ANTHROPIC_MODEL,
-        max_tokens=16000,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": prompt}],
-    )
+    try:
+        resp = anthropic.Anthropic().messages.create(
+            model=model or os.environ.get("ANTHROPIC_MODEL") or DEFAULT_ANTHROPIC_MODEL,
+            max_tokens=16000,
+            system=SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": prompt}],
+        )
+    except (anthropic.AnthropicError, TypeError) as e:  # TypeError: no API key set
+        raise TailorError(f"the Anthropic request failed: {_short(e)}\n{KEY_HINT}") from e
     return "".join(b.text for b in resp.content if getattr(b, "type", None) == "text")
 
 
 def call_openai(prompt: str, model: str | None) -> str:
     try:
-        from openai import OpenAI  # type: ignore
+        from openai import OpenAI, OpenAIError  # type: ignore
     except ImportError as e:
         raise TailorError("install the AI extra: pip install 'easy-ai-resume[ai]'") from e
     model = model or os.environ.get("OPENAI_MODEL")
     if not model:
         raise TailorError("choose an OpenAI model with --model or OPENAI_MODEL")
-    resp = OpenAI().chat.completions.create(
-        model=model,
-        response_format={"type": "json_object"},
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
-        ],
-    )
+    try:
+        resp = OpenAI().chat.completions.create(
+            model=model,
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": prompt},
+            ],
+        )
+    except OpenAIError as e:
+        raise TailorError(f"the OpenAI request failed: {_short(e)}\n{KEY_HINT}") from e
     return resp.choices[0].message.content or ""
 
 

@@ -116,3 +116,22 @@ def test_tailored_copy_still_finds_the_photo(tmp_path, monkeypatch, cv, letter):
     for path, photo in ((out_cv, yaml.safe_load(out_cv.read_text())["photo"]),
                         (out_letter, yaml.safe_load(out_letter.read_text())["sender"]["photo"])):
         assert (path.parent / photo).resolve() == (EXAMPLES / "jane.png").resolve()
+
+
+def test_ai_errors_become_a_clear_message(monkeypatch):
+    anthropic = pytest.importorskip("anthropic")
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("ANTHROPIC_AUTH_TOKEN", raising=False)
+    with pytest.raises(t.TailorError, match="API key"):
+        t.call_anthropic("prompt", None)  # no key: no traceback, a one-line error
+
+    class Boom:
+        def __init__(self, *a, **k):
+            self.messages = self
+
+        def create(self, **kwargs):
+            raise anthropic.APIConnectionError(request=None)
+
+    monkeypatch.setattr(anthropic, "Anthropic", Boom)
+    with pytest.raises(t.TailorError, match="request failed"):
+        t.call_anthropic("prompt", None)
