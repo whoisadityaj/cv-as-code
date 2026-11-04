@@ -13,7 +13,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-from easy_ai_resume.build import THEMES, load_yaml, render, theme_names, write_pdf
+from easy_ai_resume.build import DEFAULT_ACCENT, THEMES, load_yaml, render, theme_names, write_pdf
 
 ROOT = Path(__file__).resolve().parent.parent
 EXAMPLES = ROOT / "examples"
@@ -23,7 +23,7 @@ OUT = ROOT / "docs" / "images"
 DARK, DARK_2, LIGHT = (20, 6, 10), (54, 12, 24), (241, 244, 249)
 WHITE, INK, MUTED_DARK, MUTED_LIGHT = (255, 255, 255), (17, 24, 39), (201, 166, 173), (100, 116, 139)
 BRAND, BRIGHT, BLUSH = (179, 18, 46), (255, 92, 116), (255, 150, 165)
-ACCENT = "#9b1b30"  # pages in the images are rendered with this accent
+ACCENT = DEFAULT_ACCENT  # pages in the images use the default accent, as users get it
 PHOTO_ORDER = ["sidebar", "bold", "executive"]
 CLEAN_ORDER = ["modern", "minimal", "classic", "compact"]
 
@@ -32,7 +32,6 @@ CLEAN_ORDER = ["modern", "minimal", "classic", "compact"]
 
 def snapshot(yaml_name: str, theme: str, tmp: Path, ats: bool = False) -> Image.Image:
     data = load_yaml(EXAMPLES / yaml_name)
-    data["accent"] = ACCENT
     kind = "cover_letter" if "sender" in data else "cv"
     pdf = tmp / f"{Path(yaml_name).stem}-{theme}{'-ats' if ats else ''}.pdf"
     assert write_pdf(render(data, kind, theme=theme, ats=ats, base_dir=EXAMPLES), pdf), "PDF rendering failed"

@@ -66,7 +66,7 @@ Delete sections you don't need. Quote values containing `:` or `#`: `title: "Lea
 ```bash
 easy-ai-resume build                                      # PDFs in output/
 easy-ai-resume build --theme sidebar                      # try a theme: photo + colour panel
-easy-ai-resume build --theme sidebar --accent "#9b1b30"   # same theme in red
+easy-ai-resume build --theme sidebar --accent "#0f766e"   # same theme in teal (default: red)
 easy-ai-resume build --ats                                # plain version for job portals
 ```
 
@@ -74,7 +74,7 @@ Like one? Put it in **both** `input/cv.yaml` and `input/cover_letter.yaml` so pl
 
 ```yaml
 theme: sidebar
-accent: "#9b1b30"   # any hex colour; without it each theme uses its own default
+# accent: "#0f766e" # optional, any hex colour; default is the red in the pictures
 photo: me.jpg       # put the photo in input/ (photo themes only); `photo: none` for no photo
 page: a4            # a4, letter, legal, single, single-tall, or a CSS size like "210mm 380mm"
 ```
@@ -128,17 +128,17 @@ The fact check can't judge meaning ("helped with" becoming "led"), so always rea
   <img src="docs/images/gallery.png" alt="Photo themes (sidebar, bold, executive) on a dark band and clean themes (modern, minimal, classic, compact, ATS mode) on a light band" width="100%">
 </p>
 
-The pictures use `accent: "#9b1b30"`. Without `accent:`, each theme uses the default colour below.
+Every theme uses the deep red in the pictures (`#9b1b30`) unless you set `accent:` or pass `--accent`.
 
-| Theme | Look | Photo | Default colour |
-|---|---|:---:|---|
-| `sidebar` | Two columns, colour panel with photo and skill chips | ✅ | navy `#1e3a5f` |
-| `bold` | Dark header band, accent headings | ✅ | purple `#7c3aed` |
-| `executive` | Refined serif, accent rules | ✅ | gold `#a67c37` |
-| `modern` | Sans-serif, accent colour | ❌ | blue `#2563eb` |
-| `minimal` | Light type, labels in the margin | ❌ | near-black `#111827` |
-| `classic` (default) | Serif, centred header | ❌ | red-orange `#d24f3a` (cover letter) |
-| `compact` | Smaller type, fits more on a page | ❌ | red-orange `#d24f3a` (cover letter) |
+| Theme | Look | Photo |
+|---|---|:---:|
+| `sidebar` | Two columns, colour panel with photo and skill chips | ✅ |
+| `bold` | Dark header band, accent headings | ✅ |
+| `executive` | Refined serif, accent rules | ✅ |
+| `modern` | Sans-serif, accent colour | ❌ |
+| `minimal` | Light type, labels in the margin | ❌ |
+| `classic` (default) | Serif, centred header | ❌ |
+| `compact` | Smaller type, fits more on a page | ❌ |
 
 No PDF because Pango won't install? `easy-ai-resume build --html-only`, open the HTML file in a browser, **Print → Save as PDF**.
 
@@ -172,7 +172,7 @@ can read it. Try the same with `sidebar` and you'll see the two columns mixed to
 | Option | Works with | What it does |
 |---|---|---|
 | `--theme sidebar` | build, tailor | Use this theme for this run |
-| `--accent "#9b1b30"` | build, tailor | Use this colour for this run |
+| `--accent "#0f766e"` | build, tailor | Use this colour for this run (default: red `#9b1b30`) |
 | `--ats` | build, tailor | Plain ATS-friendly PDFs |
 | `--page-size a4` | build | a4, letter, legal, single, single-tall, or a CSS size |
 | `--out folder` | build, tailor | Write the files somewhere else |

@@ -135,3 +135,11 @@ def test_missing_file_error_says_where_it_looked(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     with pytest.raises(FileNotFoundError, match="holds input/"):
         build_file(Path("cv.yaml"), tmp_path / "out")
+
+
+@pytest.mark.parametrize("theme", ["sidebar", "classic", "executive"])
+def test_default_accent_is_the_readme_red(cv, theme):
+    cv.pop("accent", None)
+    html = render(cv, "cv", theme=theme, base_dir=EXAMPLES)
+    assert "--accent: #9b1b30;" in html
+    assert "--accent: #000000" in render(cv, "cv", theme=theme, ats=True, base_dir=EXAMPLES)  # ATS stays black

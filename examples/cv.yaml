@@ -14,8 +14,8 @@ contact:
 # Optional. Pick a look: classic (default), modern, compact, minimal,
 # or a photo theme: sidebar, executive, bold.
 theme: classic
-# Optional. Any hex colour. Each theme has its own default (sidebar is navy blue).
-# accent: "#9b1b30"
+# Optional. Any hex colour. Default: "#9b1b30" (deep red, as in the README pictures).
+# accent: "#0f766e"
 # Optional. Shown only by photo themes, never in ATS mode. Path is relative to this file.
 # `photo: none` means no photo.
 photo: jane.png

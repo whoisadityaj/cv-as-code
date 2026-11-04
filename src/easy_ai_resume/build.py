@@ -135,11 +135,15 @@ def _page_size_for(data: dict[str, Any]) -> str:
     return resolve_page_size(page)
 
 
+# Deep red, the colour in the README pictures. Every theme uses it unless the YAML
+# sets `accent:` or the command line passes --accent.
+DEFAULT_ACCENT = "#9b1b30"
+
+
 @dataclass(frozen=True)
 class Theme:
     """What a theme needs beyond its CSS file (themes/<name>.css)."""
 
-    accent: str = "#d24f3a"  # default accent; keep in sync with the theme's CSS
     layout: str = "single"  # "single" column or two-column "sidebar" CV
     photo: bool = False  # show `photo:` if the YAML has one
     cv_band: bool = False  # paint a full-height accent column on CV pages
@@ -147,13 +151,13 @@ class Theme:
 
 
 THEMES: dict[str, Theme] = {
-    "bold": Theme(accent="#7c3aed", photo=True, letter_band=True),
+    "bold": Theme(photo=True, letter_band=True),
     "classic": Theme(),
     "compact": Theme(),
-    "minimal": Theme(accent="#111827"),
-    "modern": Theme(accent="#2563eb", letter_band=True),
-    "executive": Theme(accent="#a67c37", photo=True),
-    "sidebar": Theme(accent="#1e3a5f", layout="sidebar", photo=True, cv_band=True, letter_band=True),
+    "minimal": Theme(),
+    "modern": Theme(letter_band=True),
+    "executive": Theme(photo=True),
+    "sidebar": Theme(layout="sidebar", photo=True, cv_band=True, letter_band=True),
 }
 
 
@@ -189,16 +193,15 @@ def _band(page: str, colour: str, width: str) -> str:
 
 
 def stylesheet(theme: str, ats: bool, accent: str | None, kind: str = "cv") -> str:
-    """Base CSS + theme layer (+ ATS layer), with an optional accent colour."""
+    """Base CSS + theme layer (+ ATS layer), in the accent colour (default: DEFAULT_ACCENT)."""
     spec = get_theme(theme)
     css = [(TEMPLATES / "style.css").read_text(encoding="utf-8")]
     css.append((TEMPLATES / "themes" / f"{theme}.css").read_text(encoding="utf-8"))
-    if accent:
-        if not re.fullmatch(r"#[0-9a-fA-F]{3,8}|[a-zA-Z]+", str(accent)):
-            raise ValueError(f"accent must be a hex colour like #2563eb, got {accent!r}")
-        soft = _tint(str(accent))
-        css.append(f":root {{ --accent: {accent};{f' --accent-soft: {soft};' if soft else ''} }}")
-    colour = accent or spec.accent
+    colour = str(accent or DEFAULT_ACCENT)
+    if not re.fullmatch(r"#[0-9a-fA-F]{3,8}|[a-zA-Z]+", colour):
+        raise ValueError(f"accent must be a hex colour like #2563eb, got {accent!r}")
+    soft = _tint(colour)  # a light version for text on dark panels
+    css.append(f":root {{ --accent: {colour};{f' --accent-soft: {soft};' if soft else ''} }}")
     if not ats and kind == "cv" and spec.cv_band:
         css.append(_band("@page", colour, "34%"))
     if not ats and kind == "cover_letter" and spec.letter_band:

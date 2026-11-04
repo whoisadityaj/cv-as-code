@@ -7,7 +7,8 @@
 - **Fixed:** a wrong or missing API key, no credit or no internet now prints one clear line instead of
   a Python traceback.
 - **Fixed:** when the PDF can't be made, the advice is now `--html-only` (`--html` still needs the PDF).
-- New `--accent` option on `build` and `tailor`, e.g. `--accent "#9b1b30"` for the red in the README pictures.
+- Every theme now uses the deep red from the README pictures (`#9b1b30`) by default, so you get what
+  you see there. `accent:` in the YAML or the new `--accent` option (`build` and `tailor`) changes it.
 - A photo theme (sidebar, bold, executive) without a `photo:` line now prints a note on how to add one.
   `photo: none` means no photo and hides the note.
 - `tailor` takes `--theme`, `--accent` and `--ats`, and makes the PDFs when any of them is given.

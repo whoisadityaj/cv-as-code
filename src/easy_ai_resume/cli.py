@@ -125,7 +125,7 @@ def main(argv: list[str] | None = None) -> int:
         help=f"Preset ({', '.join(PAGE_PRESETS)}) or a CSS size like '210mm 380mm'.",
     )
     b.add_argument("--theme", choices=theme_names(), help="Override the YAML `theme:` (default: classic).")
-    b.add_argument("--accent", help="Override the YAML `accent:` colour, e.g. '#9b1b30' (each theme has its own default).")
+    b.add_argument("--accent", help="Override the YAML `accent:` colour, e.g. '#0f766e' (default: '#9b1b30', deep red).")
     b.add_argument("--ats", action="store_true", help="Plain single-column output that applicant-tracking systems parse well.")
     html = b.add_mutually_exclusive_group()
     html.add_argument("--html", action="store_true", help="Also write the HTML file (by default only the PDF is written).")
@@ -145,7 +145,7 @@ def main(argv: list[str] | None = None) -> int:
                    help=f"Also make the tailored PDFs (default: yes if --theme, --accent or --ats is given, "
                         f"else `build:` in {CONFIG_NAME}, else no).")
     t.add_argument("--theme", choices=theme_names(), help="Theme for the tailored PDFs (default: the YAML `theme:`).")
-    t.add_argument("--accent", help="Accent colour for the tailored PDFs, e.g. '#9b1b30'.")
+    t.add_argument("--accent", help="Accent colour for the tailored PDFs, e.g. '#0f766e' (default: the YAML `accent:`, else deep red).")
     t.add_argument("--ats", action="store_true", help="Make the tailored PDFs in plain ATS-friendly mode.")
     t.add_argument("--force", action="store_true", help="Overwrite existing files in --out.")
     t.add_argument("--strict", action="store_true", help="Exit with code 2 if the fact check raises warnings.")
