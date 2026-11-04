@@ -334,7 +334,9 @@ def write_pdf(html: str, out_pdf: Path) -> bool:
             file=sys.stderr,
         )
         return False
-    HTML(string=html, base_url=str(TEMPLATES)).write_pdf(str(out_pdf))
+    # A phone photo is often 2 MB+, more than some job portals accept. 300 dpi is print
+    # quality at the size the photo is shown, and keeps the PDF to a few hundred KB.
+    HTML(string=html, base_url=str(TEMPLATES)).write_pdf(str(out_pdf), optimize_images=True, dpi=300)
     return True
 
 

@@ -1,7 +1,8 @@
 import pytest
+import yaml
 
 from easy_ai_resume.build import THEMES, photo_src, render
-from conftest import EXAMPLES
+from conftest import EXAMPLES, needs_pdf
 
 PHOTO_THEMES = [name for name, spec in THEMES.items() if spec.photo]
 PLAIN_THEMES = [name for name, spec in THEMES.items() if not spec.photo]
@@ -63,3 +64,20 @@ def test_photo_theme_without_photo_gives_a_note(cv, letter):
     cv["photo"] = "none"
     assert missing_photo_note(cv, "cv", "sidebar", None) is None
     assert 'class="photo"' not in render(cv, "cv", theme="sidebar", base_dir=EXAMPLES)  # "none" isn't a file
+
+
+@needs_pdf
+def test_a_big_photo_doesnt_make_a_big_pdf(cv, tmp_path):
+    import random
+
+    from PIL import Image
+
+    from easy_ai_resume.build import build_file
+
+    random.seed(1)  # noise doesn't compress, like a real photo
+    Image.frombytes("RGB", (1500, 1500), random.randbytes(1500 * 1500 * 3)).save(tmp_path / "big.png")
+    assert (tmp_path / "big.png").stat().st_size > 5_000_000
+    cv["photo"], cv["theme"] = "big.png", "sidebar"
+    (tmp_path / "cv.yaml").write_text(yaml.safe_dump(cv))
+    pdf = next(p for p in build_file(tmp_path / "cv.yaml", tmp_path / "out") if p.suffix == ".pdf")
+    assert pdf.stat().st_size < 1_000_000  # under every job portal's upload limit
