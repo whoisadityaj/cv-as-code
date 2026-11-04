@@ -16,7 +16,7 @@
 .entry .accomplishments-label { text-decoration: none; }
 .letter { display: block; min-height: 0; font-size: 10.5pt; }
 @page cover-letter { margin: 18mm 20mm; }
-.letter .sidebar, .letter .body-col { padding: 0; background: none; }
+.letter .sidebar, .letter .body-col { padding: 0; background: none; border: 0; }
 .letter .sidebar { margin-bottom: 14px; }
 .letter .sidebar .name-stack { font-size: 18pt; font-weight: bold; text-transform: none; }
 .letter .sidebar .name-stack .first, .letter .sidebar .name-stack .last { display: inline; }

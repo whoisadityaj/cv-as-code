@@ -154,3 +154,10 @@ def test_cover_letter_links_are_clickable_in_the_pdf(letter, theme, ats):
     page = HTML(string=render(letter, "cover_letter", theme=theme, ats=ats, base_dir=EXAMPLES)).render().pages[0]
     clickable = {target for kind, target, *_ in page.links if kind == "external"}
     assert {link["url"] for link in letter["sender"]["links"]} <= clickable
+
+
+def test_bold_and_sidebar_cover_letters_look_different(letter):
+    sidebar = render(letter, "cover_letter", theme="sidebar", base_dir=EXAMPLES)
+    bold = render(letter, "cover_letter", theme="bold", base_dir=EXAMPLES)
+    assert "linear-gradient" in sidebar  # a coloured column down the side
+    assert "linear-gradient" not in bold and "border-bottom: 1.5mm solid var(--accent)" in bold  # a header band

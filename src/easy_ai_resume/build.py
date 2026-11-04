@@ -151,7 +151,7 @@ class Theme:
 
 
 THEMES: dict[str, Theme] = {
-    "bold": Theme(photo=True, letter_band=True),
+    "bold": Theme(photo=True),  # its cover letter has a header band instead of a side band
     "classic": Theme(),
     "compact": Theme(),
     "minimal": Theme(),

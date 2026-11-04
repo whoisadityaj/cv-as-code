@@ -13,6 +13,7 @@
 
   <aside class="sidebar">
     {% if photo %}<img class="photo" src="{{ photo }}" alt="Photo of {{ data.sender.name }}" />{% endif %}
+    <div class="who">
     <h1 class="name-stack">
       {%- set parts = data.sender.name.split(' ', 1) -%}
       <span class="first">{{ parts[0] }}</span>
@@ -26,6 +27,7 @@
       {% endfor %}
     </div>
     {% endif %}
+    </div>
   </aside>
 
   <section class="body-col">

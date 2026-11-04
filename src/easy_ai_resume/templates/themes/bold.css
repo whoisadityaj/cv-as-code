@@ -36,10 +36,22 @@
 .entry .accomplishments-label { display: none; }
 .skills .group .label { font-style: normal; color: var(--accent); }
 
-/* cover letter */
-.letter .sidebar .name-stack { color: #ffffff; font-weight: bold; font-size: 32pt; }
-.letter .sidebar .tagline { color: #ffffff; opacity: 0.85; font-weight: bold; }
-.letter .sidebar .links a, .letter .sidebar .links a .icon { color: #ffffff; }
-.letter .sidebar .photo { width: 32mm; height: 32mm; border: 1.1mm solid #ffffff; }
-.letter .body-col { padding-left: 14mm; }
+/* cover letter: the same dark header band as the CV, then the letter in one wide column */
+.letter { display: block; }
+.letter .sidebar {
+  padding: 14mm 18mm 10mm 18mm;
+  background: #111827;
+  border-bottom: 1.5mm solid var(--accent);
+  color: #ffffff;
+}
+.letter.has-photo .sidebar { display: flex; align-items: center; gap: 8mm; }
+.letter .sidebar .photo { flex: none; width: 30mm; height: 30mm; margin: 0; border: 1.1mm solid var(--accent); }
+.letter .sidebar .name-stack { color: #ffffff; font-weight: bold; font-size: 28pt; text-transform: none; }
+.letter .sidebar .name-stack .first, .letter .sidebar .name-stack .last { display: inline; }
+.letter .sidebar .tagline { color: var(--accent-soft); font-weight: bold; margin-top: 2mm; }
+.letter .sidebar .links { flex-direction: row; flex-wrap: wrap; gap: 1.5mm 7mm; margin-top: 4mm; }
+.letter .sidebar .who { flex: 1; }
+.letter .sidebar .links a { flex: none; white-space: nowrap; color: #ffffff; }
+.letter .sidebar .links a .icon { color: var(--accent-soft); }
+.letter .body-col { padding: 12mm 18mm 18mm 18mm; }
 .letter .body-col .date { border-bottom-color: var(--accent); color: var(--accent); font-weight: bold; }
