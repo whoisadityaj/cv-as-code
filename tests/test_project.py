@@ -3,10 +3,10 @@ from pathlib import Path
 
 import pytest
 
-from cv_as_code import cli
-from cv_as_code import tailor as t
-from cv_as_code.config import job_slug, load_project
-from cv_as_code.starter import init
+from easy_ai_resume import cli
+from easy_ai_resume import tailor as t
+from easy_ai_resume.config import job_slug, load_project
+from easy_ai_resume.starter import init
 
 CONFIG = """\
 cv: data/cv.yaml

@@ -13,7 +13,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-from cv_as_code.build import THEMES, load_yaml, render, theme_names, write_pdf
+from easy_ai_resume.build import THEMES, load_yaml, render, theme_names, write_pdf
 
 ROOT = Path(__file__).resolve().parent.parent
 EXAMPLES = ROOT / "examples"
@@ -145,7 +145,7 @@ def showcase(shots: dict[str, Image.Image], letters: dict[str, Image.Image]) -> 
     d = ImageDraw.Draw(canvas)
     d.text((80, 70), "One YAML file.", font=font(54, bold=True), fill=WHITE)
     d.text((80, 134), "Seven good-looking PDFs.", font=font(54, bold=True), fill=BLUSH)
-    d.text((W - 80, H - 60), "every page rendered by cv-as-code from examples/", font=font(20), fill=MUTED_LIGHT, anchor="rs")
+    d.text((W - 80, H - 60), "every page rendered by easy-ai-resume from examples/", font=font(20), fill=MUTED_LIGHT, anchor="rs")
 
     place(canvas, page(letters["bold"], 400), (470, 610), angle=8)
     place(canvas, page(shots["executive"], 400), (1150, 560), angle=-7)

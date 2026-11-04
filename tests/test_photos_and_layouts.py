@@ -1,6 +1,6 @@
 import pytest
 
-from cv_as_code.build import THEMES, photo_src, render
+from easy_ai_resume.build import THEMES, photo_src, render
 from conftest import EXAMPLES
 
 PHOTO_THEMES = [name for name, spec in THEMES.items() if spec.photo]

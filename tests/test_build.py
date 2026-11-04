@@ -1,6 +1,6 @@
 import pytest
 
-from cv_as_code.build import TEMPLATES, build_file, detect_kind, output_stem, render, theme_names
+from easy_ai_resume.build import TEMPLATES, build_file, detect_kind, output_stem, render, theme_names
 from conftest import EXAMPLES, needs_pdf
 
 

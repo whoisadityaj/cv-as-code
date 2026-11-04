@@ -63,7 +63,7 @@ def call_anthropic(prompt: str, model: str | None) -> str:
     try:
         import anthropic  # type: ignore
     except ImportError as e:
-        raise TailorError("install the AI extra: pip install 'cv-as-code[ai]'") from e
+        raise TailorError("install the AI extra: pip install 'easy-ai-resume[ai]'") from e
     resp = anthropic.Anthropic().messages.create(
         model=model or os.environ.get("ANTHROPIC_MODEL") or DEFAULT_ANTHROPIC_MODEL,
         max_tokens=16000,
@@ -77,7 +77,7 @@ def call_openai(prompt: str, model: str | None) -> str:
     try:
         from openai import OpenAI  # type: ignore
     except ImportError as e:
-        raise TailorError("install the AI extra: pip install 'cv-as-code[ai]'") from e
+        raise TailorError("install the AI extra: pip install 'easy-ai-resume[ai]'") from e
     model = model or os.environ.get("OPENAI_MODEL")
     if not model:
         raise TailorError("choose an OpenAI model with --model or OPENAI_MODEL")

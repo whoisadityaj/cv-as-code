@@ -2,16 +2,16 @@ import json
 
 import pytest
 
-from cv_as_code import __version__
-from cv_as_code import tailor as t
-from cv_as_code.cli import main
+from easy_ai_resume import __version__
+from easy_ai_resume import tailor as t
+from easy_ai_resume.cli import main
 from conftest import EXAMPLES
 
 
 def test_version(capsys):
     with pytest.raises(SystemExit):
         main(["--version"])
-    assert f"cv-as-code {__version__}" in capsys.readouterr().out
+    assert f"easy-ai-resume {__version__}" in capsys.readouterr().out
 
 
 def test_build_html_only(tmp_path):
@@ -27,7 +27,7 @@ def test_build_missing_file(tmp_path, capsys):
 
 
 def test_build_fails_when_pdf_cannot_be_made(tmp_path, monkeypatch, capsys):
-    monkeypatch.setattr("cv_as_code.build.write_pdf", lambda html, out: False)
+    monkeypatch.setattr("easy_ai_resume.build.write_pdf", lambda html, out: False)
     assert main(["build", str(EXAMPLES / "cv.yaml"), "--out", str(tmp_path)]) == 1
     assert "PDF generation failed" in capsys.readouterr().err
     assert (tmp_path / "Jane_Doe_CV.html").exists()
@@ -45,7 +45,7 @@ def test_tailor_strict_exit_code(tmp_path, monkeypatch, cv, letter):
 def test_init_creates_starter_files_that_build(tmp_path, capsys):
     assert main(["init", str(tmp_path)]) == 0
     assert sorted(p.name for p in tmp_path.iterdir()) == ["cover_letter.yaml", "cv.yaml", "jane.png", "job.md"]
-    assert "cv-as-code build cv.yaml" in capsys.readouterr().out
+    assert "easy-ai-resume build cv.yaml" in capsys.readouterr().out
     out = tmp_path / "out"
     assert main(["build", str(tmp_path / "cv.yaml"), "--theme", "sidebar", "--html-only", "--out", str(out)]) == 0
     assert "data:image/png;base64," in (out / "Jane_Doe_CV.html").read_text()  # photo found next to the YAML

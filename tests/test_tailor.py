@@ -4,7 +4,7 @@ import json
 import pytest
 import yaml
 
-from cv_as_code import tailor as t
+from easy_ai_resume import tailor as t
 from conftest import EXAMPLES
 
 

@@ -1,4 +1,4 @@
-"""Starter files for `cv-as-code init`: the Jane Doe examples, ready to edit."""
+"""Starter files for `easy-ai-resume init`: the Jane Doe examples, ready to edit."""
 from __future__ import annotations
 
 import shutil

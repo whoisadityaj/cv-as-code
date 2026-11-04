@@ -1,4 +1,4 @@
-"""Command line: `cv-as-code init`, `build` and `tailor`."""
+"""Command line: `easy-ai-resume init`, `build` and `tailor`."""
 from __future__ import annotations
 
 import argparse
@@ -20,7 +20,7 @@ def cmd_init(args: argparse.Namespace) -> int:
         return 1
     for p in written:
         print(f"wrote {p}")
-    print("\nNext: edit cv.yaml, then run:  cv-as-code build cv.yaml")
+    print("\nNext: edit cv.yaml, then run:  easy-ai-resume build cv.yaml")
     return 0
 
 
@@ -97,7 +97,7 @@ def cmd_tailor(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(prog="cv-as-code", description="Your CV as code: YAML in, clean PDF out.")
+    p = argparse.ArgumentParser(prog="easy-ai-resume", description="Easy AI resume: YAML in, clean PDF out, tailored to any job.")
     p.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     sub = p.add_subparsers(dest="command", required=True)
 

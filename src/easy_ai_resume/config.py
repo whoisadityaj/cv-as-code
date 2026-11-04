@@ -2,7 +2,7 @@
 
     cv: data/cv.yaml                 # used by `build` and `tailor`
     letter: data/cover_letter.yaml
-    output: output                   # where `cv-as-code build` writes
+    output: output                   # where `easy-ai-resume build` writes
     tailored: applications           # `tailor jobs/acme.md` writes to applications/acme/
     build: true                      # render PDFs after tailoring
 
