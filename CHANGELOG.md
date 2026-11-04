@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.13.1 — 2026-11-05
 
 - `--html-only` and `tailor --strict` are listed in `--help` and the README again.
 
