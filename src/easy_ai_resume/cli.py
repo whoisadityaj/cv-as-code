@@ -125,7 +125,8 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument("--out", type=Path, help=f"Output directory (default: ./output, or `output:` in {CONFIG_NAME}).")
     b.add_argument(
         "--page-size", default="",
-        help=f"Preset ({', '.join(PAGE_PRESETS)}) or a CSS size like '210mm 380mm'.",
+        help=f"Preset ({', '.join(PAGE_PRESETS)}), 'fit' (one page exactly as tall as the content) "
+             "or a CSS size like '210mm 380mm'.",
     )
     b.add_argument("--theme", choices=theme_names(), help="Override the YAML `theme:` (default: classic).")
     b.add_argument("--accent", help="Override the YAML `accent:` colour, e.g. '#0f766e' (default: '#9b1b30', deep red).")

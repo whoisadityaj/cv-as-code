@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import yaml
+
 import pytest
 
 from easy_ai_resume.build import TEMPLATES, build_file, detect_kind, output_stem, render, theme_names
@@ -170,3 +172,38 @@ def test_startups_come_before_projects(cv, theme):
     html = render(cv, "cv", theme=theme, base_dir=EXAMPLES)
     assert "<h2>Startups</h2>" in html and html.index("Hush Mouse") < html.index("<h2>Projects</h2>")
     assert 'href="https://hushmouse.com"' in html
+
+
+@needs_pdf
+@pytest.mark.parametrize("theme", theme_names())
+@pytest.mark.parametrize("kind", ["cv", "cover_letter"])
+@pytest.mark.parametrize("longer", [False, True])
+def test_fit_makes_one_page_as_tall_as_the_content(cv, letter, theme, kind, longer):
+    from weasyprint import HTML
+
+    from easy_ai_resume.build import FIT_TALL, fit_page_size
+
+    data = cv if kind == "cv" else letter
+    if longer:  # six times the content: taller than A4, still one page
+        if kind == "cv":
+            cv["experience"] *= 6
+        else:
+            letter["body"] *= 6
+    size = fit_page_size(render(data, kind, page_size=FIT_TALL, theme=theme, base_dir=EXAMPLES))
+    height = float(size.split()[1].removesuffix("mm"))
+    assert (height > 297) if longer else (120 < height < 297)
+    pages = HTML(string=render(data, kind, page_size=size, theme=theme, base_dir=EXAMPLES)).render().pages
+    assert len(pages) == 1
+
+
+def test_page_fit_from_the_yaml(cv, tmp_path, monkeypatch, capsys):
+    cv["page"] = {"size": "fit"}
+    (tmp_path / "cv.yaml").write_text(yaml.safe_dump(cv))
+    monkeypatch.setattr("easy_ai_resume.build.fit_page_size", lambda html: "210mm 240mm")
+    build_file(tmp_path / "cv.yaml", tmp_path, pdf=False)
+    assert "size: 210mm 240mm;" in (tmp_path / "Jane_Doe_CV.html").read_text()
+
+    monkeypatch.setattr("easy_ai_resume.build.fit_page_size", lambda html: None)  # no WeasyPrint
+    build_file(tmp_path / "cv.yaml", tmp_path, pdf=False)
+    assert "size: A4;" in (tmp_path / "Jane_Doe_CV.html").read_text()
+    assert "using A4" in capsys.readouterr().err

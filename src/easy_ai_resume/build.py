@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import base64
 import datetime as _dt
+import math
 import os
 import re
 from dataclasses import dataclass
@@ -34,6 +35,13 @@ PAGE_PRESETS: dict[str, str] = {
     "single-tall": "210mm 500mm",
     "single-short": "210mm 350mm",
 }
+
+# `page: fit` = one A4-wide page exactly as tall as the content. The document is laid out
+# on a very tall page first, where its content ends is measured, and the real page gets
+# that height plus its normal bottom margin.
+FIT = "fit"
+FIT_TALL = "210mm 3000mm"
+FIT_EXTRA_MM = 2  # a little room under the page's own bottom margin
 
 
 # ----------------------------------------------------------------- markdown
@@ -125,6 +133,8 @@ def resolve_page_size(spec: str | None) -> str:
     if not spec:
         return ""
     key = str(spec).strip().lower()
+    if key == FIT:
+        return FIT
     return PAGE_PRESETS.get(key, str(spec).strip())
 
 
@@ -257,7 +267,7 @@ def render(
     ctx: dict[str, Any] = {
         "data": data,
         "css": stylesheet(theme, ats, accent or data.get("accent"), kind),
-        "page_size": page_size or _page_size_for(data),
+        "page_size": FIT_TALL if (page_size or _page_size_for(data)) == FIT else (page_size or _page_size_for(data)),
         "ats": ats,
         "theme": theme,
         "layout": layout,
@@ -340,6 +350,36 @@ def write_pdf(html: str, out_pdf: Path) -> bool:
     return True
 
 
+def fit_page_size(html: str) -> str | None:
+    """The `210mm <height>` page that ends just below the content of `html` (laid out on FIT_TALL).
+
+    While measuring, the cover letter may not stretch to the page height (it uses
+    `min-height: 100vh`), so the lowest box, padding included, is where the content ends.
+    None if WeasyPrint isn't usable.
+    """
+    use_homebrew_libraries()
+    # Only `.letter` stretches (min-height: 100vh). Don't reset min-height everywhere:
+    # flex items rely on their default `min-height: auto`.
+    html = html.replace("</head>", "<style>.letter { min-height: 0 !important; }</style></head>", 1)
+    try:
+        from weasyprint import HTML  # type: ignore
+        from weasyprint.formatting_structure import boxes  # type: ignore
+
+        pages = HTML(string=html, base_url=str(TEMPLATES)).render().pages
+        page = pages[0]._page_box
+        bottom_px = max(
+            (b.position_y + b.margin_height() for b in page.descendants()
+             if not isinstance(b, (boxes.PageBox, boxes.MarginBox))),
+            default=0,
+        )
+    except Exception:  # WeasyPrint missing, or its internals changed
+        return None
+    if len(pages) > 1 or not bottom_px:
+        return None
+    mm = (bottom_px + page.margin_bottom) * 25.4 / 96  # CSS px are 1/96 inch
+    return f"210mm {math.ceil(mm + FIT_EXTRA_MM)}mm"
+
+
 def build_file(
     path: Path,
     out_dir: Path,
@@ -356,8 +396,15 @@ def build_file(
     """
     data = load_yaml(path)
     kind = detect_kind(data)
-    page = render(data, kind, page_size=resolve_page_size(page_size), theme=theme, ats=ats,
-                  base_dir=path.parent, accent=accent)
+    look = dict(theme=theme, ats=ats, base_dir=path.parent, accent=accent)
+    size = resolve_page_size(page_size) or _page_size_for(data)
+    if size == FIT:
+        size = fit_page_size(render(data, kind, page_size=FIT_TALL, **look))
+        if not size:
+            print(f"note ({path.name}): `page: fit` needs WeasyPrint to measure the content; using A4.",
+                  file=sys.stderr)
+            size = "A4"
+    page = render(data, kind, page_size=size, **look)
     note = missing_photo_note(data, kind, theme, ats)
     if note:
         print(f"note ({path.name}): {note}", file=sys.stderr)
