@@ -1,18 +1,18 @@
 <p align="center">
-  <img src="docs/images/banner.svg" alt="cv-as-code: YAML typing into a live CV preview, then PDF ready" width="100%">
+  <img src="docs/images/banner.svg" alt="easy-ai-resume: YAML typing into a live CV preview, then PDF ready" width="100%">
 </p>
 
 <p align="center">
-  <a href="https://github.com/whoisadityaj/cv-as-code/actions/workflows/ci.yml"><img src="https://github.com/whoisadityaj/cv-as-code/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/whoisadityaj/easy-ai-resume/actions/workflows/ci.yml"><img src="https://github.com/whoisadityaj/easy-ai-resume/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-b3122e" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/python-3.10%2B-9b1b30?logo=python&logoColor=white" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/AI-Claude%20%7C%20OpenAI-5c0a1a" alt="Works with Claude or OpenAI">
 </p>
 
-<h1 align="center">cv-as-code</h1>
+<h1 align="center">easy-ai-resume</h1>
 
 <p align="center">
-  <b>Your CV as code.</b> Keep your CV in a YAML file and build a clean PDF from it.<br>
+  <b>Your resume, made easy.</b> Keep your CV in one simple text file and build a clean PDF from it.<br>
   For each job, AI rewrites the <b>YAML</b> to match the posting, and a fact check
   makes sure it <b>never invents anything</b>.
 </p>
@@ -31,22 +31,22 @@
 ## ✨ What you get
 
 <p align="center">
-  <img src="docs/images/showcase.png" alt="Three real pages rendered by cv-as-code from one YAML file: sidebar CV, bold cover letter and executive CV" width="100%">
+  <img src="docs/images/showcase.png" alt="Three real pages rendered by easy-ai-resume from one YAML file: sidebar CV, bold cover letter and executive CV" width="100%">
 </p>
 
 - 📄 **YAML in, PDF out.** Plain text you can diff, review and keep in Git.
 - 🎨 **7 themes + ATS mode.** From classic to a two-column sidebar with your photo, plus a plain
   layout that applicant-tracking systems parse cleanly.
 - 🤖 **AI tailoring with a fact check.** AI edits your YAML (never the PDF) to fit a job description,
-  then cv-as-code flags any number, date, employer, school or skill that wasn't in your original.
+  then easy-ai-resume flags any number, date, employer, school or skill that wasn't in your original.
 - 🚀 **Runs in GitHub Actions.** Push your YAML, get fresh PDFs.
 
 ## 🧭 Step-by-step guide
 
 No coding needed. You will edit one text file and run a few commands. It takes about 10 minutes.
 
-> **Already use Python?** `pip install https://github.com/whoisadityaj/cv-as-code/archive/refs/heads/main.zip`,
-> then `cv-as-code init` and `cv-as-code build cv.yaml`.
+> **Already use Python?** `pip install https://github.com/whoisadityaj/easy-ai-resume/archive/refs/heads/main.zip`,
+> then `easy-ai-resume init` and `easy-ai-resume build cv.yaml`.
 
 ### Step 1: Check that you have Python
 
@@ -62,7 +62,7 @@ during install, and use `python` instead of `python3` in the steps below.
 
 ### Step 2: Install the PDF helper
 
-cv-as-code uses a free library called Pango to draw PDFs.
+easy-ai-resume uses a free library called Pango to draw PDFs.
 
 - **Mac:** install [Homebrew](https://brew.sh), then run `brew install pango`
 - **Ubuntu / Debian:** `sudo apt install libpango-1.0-0 libpangoft2-1.0-0`
@@ -71,7 +71,7 @@ cv-as-code uses a free library called Pango to draw PDFs.
 Can't get it working? Skip it. You will still get an HTML file that you can open in your browser
 and save as PDF with **Print → Save as PDF**.
 
-### Step 3: Install cv-as-code
+### Step 3: Install easy-ai-resume
 
 This creates a small private folder (`cv-env`) for the tool, so it doesn't touch anything else
 on your computer.
@@ -79,17 +79,17 @@ on your computer.
 ```bash
 python3 -m venv cv-env
 source cv-env/bin/activate        # Windows: cv-env\Scripts\activate
-pip install https://github.com/whoisadityaj/cv-as-code/archive/refs/heads/main.zip
+pip install https://github.com/whoisadityaj/easy-ai-resume/archive/refs/heads/main.zip
 ```
 
-> Every time you open a new terminal, run the `activate` line again before using cv-as-code.
+> Every time you open a new terminal, run the `activate` line again before using easy-ai-resume.
 
 ### Step 4: Get the starter files
 
 ```bash
 mkdir my-cv
 cd my-cv
-cv-as-code init
+easy-ai-resume init
 ```
 
 This gives you four files to start from: `cv.yaml` (your CV), `cover_letter.yaml`, `job.md`
@@ -98,7 +98,7 @@ This gives you four files to start from: `cv.yaml` (your CV), `cover_letter.yaml
 ### Step 5: Make your first PDF
 
 ```bash
-cv-as-code build cv.yaml
+easy-ai-resume build cv.yaml
 ```
 
 Your PDF is now in the `output` folder. Open it:
@@ -129,7 +129,7 @@ experience:
 
 - Keep the same structure as the example, and delete any section you don't need.
 - If a value has a `:` or `#` in it, put it in quotes: `title: "Lead: Platform"`.
-- Run `cv-as-code build cv.yaml` again after every change. The PDF is named after you
+- Run `easy-ai-resume build cv.yaml` again after every change. The PDF is named after you
   (for example `output/Your_Name_CV.pdf`).
 
 ### Step 7: Pick a look
@@ -137,7 +137,7 @@ experience:
 Change the `theme:` line in `cv.yaml` (see [Themes](#-themes) below), or try one without editing:
 
 ```bash
-cv-as-code build cv.yaml --theme sidebar
+easy-ai-resume build cv.yaml --theme sidebar
 ```
 
 **Your photo:** put it in the `my-cv` folder and change the line to `photo: me.jpg`. Only the
@@ -148,7 +148,7 @@ cv-as-code build cv.yaml --theme sidebar
 Edit `cover_letter.yaml` the same way, then:
 
 ```bash
-cv-as-code build cover_letter.yaml
+easy-ai-resume build cover_letter.yaml
 ```
 
 ### Step 9 (optional): Tailor it to a job with AI
@@ -159,14 +159,14 @@ cv-as-code build cover_letter.yaml
 3. Install the AI add-on and add your key:
 
    ```bash
-   pip install "cv-as-code[ai] @ https://github.com/whoisadityaj/cv-as-code/archive/refs/heads/main.zip"
+   pip install "easy-ai-resume[ai] @ https://github.com/whoisadityaj/easy-ai-resume/archive/refs/heads/main.zip"
    export ANTHROPIC_API_KEY=your-key-here      # Windows: $env:ANTHROPIC_API_KEY="your-key-here"
    ```
 
 4. Run it:
 
    ```bash
-   cv-as-code tailor job.md --cv cv.yaml --letter cover_letter.yaml --out tailored/acme --build
+   easy-ai-resume tailor job.md --cv cv.yaml --letter cover_letter.yaml --out tailored/acme --build
    ```
 
 Your originals are not changed. The tailored files and PDFs go in `tailored/acme`. Read any
@@ -175,7 +175,7 @@ Your originals are not changed. The tailored files and PDFs go in `tailored/acme
 ### Step 10: Before you send it
 
 - Applying through an online job portal? Make a plain version that hiring software can read:
-  `cv-as-code build cv.yaml --ats`
+  `easy-ai-resume build cv.yaml --ats`
 - Open the PDF and check the dates, numbers and contact details yourself.
 
 ## 🎨 Themes
@@ -210,8 +210,8 @@ ats: true           # plain output for applicant-tracking systems (drops the pho
 For a cover letter, put the photo under `sender:` (`sender: {photo: me.jpg}`).
 
 ```bash
-cv-as-code build cv.yaml --theme bold
-cv-as-code build cv.yaml cover_letter.yaml --ats
+easy-ai-resume build cv.yaml --theme bold
+easy-ai-resume build cv.yaml cover_letter.yaml --ats
 ```
 
 > 📸 **Photo or not?** Many US and UK employers prefer CVs without photos, and ATS software ignores
@@ -226,16 +226,16 @@ cv.yaml + job.md  ──AI──▶  tailored/acme/cv.yaml  ──fact check─�
 ```
 
 ```bash
-pip install "cv-as-code[ai] @ git+https://github.com/whoisadityaj/cv-as-code"
+pip install "easy-ai-resume[ai] @ git+https://github.com/whoisadityaj/easy-ai-resume"
 export ANTHROPIC_API_KEY=...        # or OPENAI_API_KEY plus OPENAI_MODEL
-cv-as-code tailor job.md --cv cv.yaml --letter cover_letter.yaml --out tailored/acme --build
+easy-ai-resume tailor job.md --cv cv.yaml --letter cover_letter.yaml --out tailored/acme --build
 ```
 
 This writes `tailored/acme/cv.yaml` and `tailored/acme/cover_letter.yaml` (and PDFs with
 `--build`). Your originals are never modified, and existing files are not overwritten unless you
 pass `--force`.
 
-The model is told to reword, reorder and drop content but never invent it. Then **cv-as-code
+The model is told to reword, reorder and drop content but never invent it. Then **easy-ai-resume
 checks**, and warns you about:
 
 - numbers that weren't in your originals (`65%`, `3M users`, `12 years`)
@@ -257,28 +257,28 @@ needs a model name). Your CV and the job description are sent to the provider yo
 
 ## 📁 Apply to many jobs from one folder
 
-Keep your CV in its own folder (or a private repo) and add a `cv-as-code.yaml` so you never type
+Keep your CV in its own folder (or a private repo) and add a `easy-ai-resume.yaml` so you never type
 paths again:
 
 ```yaml
 cv: data/cv.yaml
 letter: data/cover_letter.yaml
-output: output            # where `cv-as-code build` writes
+output: output            # where `easy-ai-resume build` writes
 tailored: applications    # one folder per job
 build: true               # make the PDFs right after tailoring
 ```
 
 ```text
 my-cv/
-├── cv-as-code.yaml
+├── easy-ai-resume.yaml
 ├── data/cv.yaml, data/cover_letter.yaml
 ├── jds/acme-senior-sdet.md          ← paste each job post here
 └── applications/acme-senior-sdet/   ← tailored YAML + PDFs for that job
 ```
 
 ```bash
-cv-as-code build                           # your normal CV and cover letter
-cv-as-code tailor jds/acme-senior-sdet.md  # tailored copy in applications/acme-senior-sdet/
+easy-ai-resume build                           # your normal CV and cover letter
+easy-ai-resume tailor jds/acme-senior-sdet.md  # tailored copy in applications/acme-senior-sdet/
 ```
 
 `tailor` prints the `diff` commands to review every change. Tip: commit the tailored YAML files so
@@ -290,7 +290,7 @@ Keep your CV in a (private) repo and copy [`examples/github-workflow.yml`](examp
 to `.github/workflows/cv.yml`:
 
 ```yaml
-- uses: whoisadityaj/cv-as-code@v0.4.0
+- uses: whoisadityaj/easy-ai-resume@v0.5.0
   with:
     files: cv.yaml cover_letter.yaml
     # theme: modern
@@ -314,8 +314,8 @@ Every push rebuilds the PDFs and attaches them to the run.
 `date` (`auto` = today, format with `date_format`), `recipient` (`hiring_manager`, `team`,
 `company`, `address`), `salutation`, `body` (list of Markdown paragraphs), `sign_off`.
 
-Every section is optional. Run `cv-as-code init` (or see [examples](examples/)) for everything in use.
+Every section is optional. Run `easy-ai-resume init` (or see [examples](examples/)) for everything in use.
 
 ## License
 
-[MIT](LICENSE). If cv-as-code helps you land an interview, a ⭐ helps the next person find it.
+[MIT](LICENSE). If easy-ai-resume helps you land an interview, a ⭐ helps the next person find it.
