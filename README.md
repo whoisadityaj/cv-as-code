@@ -68,8 +68,8 @@ easy-ai-resume uses a free library called Pango to draw PDFs.
 - **Ubuntu / Debian:** `sudo apt install libpango-1.0-0 libpangoft2-1.0-0`
 - **Windows:** follow [WeasyPrint's Windows steps](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#windows)
 
-Can't get it working? Skip it. You will still get an HTML file that you can open in your browser
-and save as PDF with **Print → Save as PDF**.
+Can't get it working? Skip it. Add `--html` when you build (step 5) to get an HTML file, then
+open it in your browser and use **Print → Save as PDF**.
 
 ### Step 3: Install easy-ai-resume
 
@@ -101,7 +101,7 @@ This gives you four files to start from: `cv.yaml` (your CV), `cover_letter.yaml
 easy-ai-resume build cv.yaml
 ```
 
-Your PDF is now in the `output` folder. Open it:
+Your PDF is now in the `output` folder (add `--html` if you also want the HTML file). Open it:
 
 ```bash
 open output/Jane_Doe_CV.pdf       # Windows: start output\Jane_Doe_CV.pdf
