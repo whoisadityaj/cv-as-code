@@ -143,3 +143,14 @@ def test_default_accent_is_the_readme_red(cv, theme):
     html = render(cv, "cv", theme=theme, base_dir=EXAMPLES)
     assert "--accent: #9b1b30;" in html
     assert "--accent: #000000" in render(cv, "cv", theme=theme, ats=True, base_dir=EXAMPLES)  # ATS stays black
+
+
+@needs_pdf
+@pytest.mark.parametrize("theme", theme_names())
+@pytest.mark.parametrize("ats", [False, True])
+def test_cover_letter_links_are_clickable_in_the_pdf(letter, theme, ats):
+    from weasyprint import HTML
+
+    page = HTML(string=render(letter, "cover_letter", theme=theme, ats=ats, base_dir=EXAMPLES)).render().pages[0]
+    clickable = {target for kind, target, *_ in page.links if kind == "external"}
+    assert {link["url"] for link in letter["sender"]["links"]} <= clickable

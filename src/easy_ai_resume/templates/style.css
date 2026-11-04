@@ -253,7 +253,7 @@ em     { font-style: italic; }
 }
 .letter .sidebar .links a {
   color: var(--ink);
-  display: inline-flex;
+  display: flex;   /* not inline-flex: WeasyPrint drops the PDF link of an inline-flex item */
   align-items: center;
   gap: 6px;
 }
