@@ -76,7 +76,7 @@ def test_tailor_uses_project_paths_and_names_the_folder_after_the_job(project, m
     out = project / "applications" / "acme-senior-sdet"
     assert (out / "cv.yaml").is_file() and (out / "cover_letter.yaml").is_file()
     assert built == [("cv.yaml", out), ("cover_letter.yaml", out)]  # build: true in the project file
-    assert f"diff -u {project / 'data' / 'cv.yaml'} {out / 'cv.yaml'}" in capsys.readouterr().out
+    assert str(out / "changes.diff") in capsys.readouterr().out
 
 
 def test_no_build_flag_overrides_the_project_file(project, monkeypatch, cv, letter):

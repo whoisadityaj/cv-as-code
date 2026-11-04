@@ -83,7 +83,7 @@ def cmd_tailor(args: argparse.Namespace) -> int:
     try:
         out_cv, out_letter, notes, warns = tailor(
             args.jd, cv, letter, out,
-            provider=args.provider, model=args.model, force=args.force,
+            provider=args.provider, model=args.model, force=args.force, effort=args.effort,
         )
     except TailorError as e:
         print(f"error: {e}", file=sys.stderr)
@@ -105,7 +105,8 @@ def cmd_tailor(args: argparse.Namespace) -> int:
                 return 1
             for p in written:
                 print(f"wrote {p}")
-    print(f"\nReview what changed before sending:\n  diff -u {cv} {out_cv}\n  diff -u {letter} {out_letter}")
+    print(f"\nEvery change, line by line (- your original, + tailored): {out / 'changes.diff'}\n"
+          "Read it before sending.")
     return 2 if warns and args.strict else 0
 
 
@@ -146,8 +147,10 @@ def main(argv: list[str] | None = None) -> int:
     t.add_argument("--provider", choices=["auto", "claude", "codex", "opencode", "anthropic", "openai"], default="auto",
                    help="auto (default) tries your installed subscription tools (claude, codex, opencode), "
                         "then API keys (anthropic, openai).")
-    t.add_argument("--model", help="Model name for the chosen provider (default: the tool's own default; "
-                                   "required for the OpenAI API).")
+    t.add_argument("--model", help="Model for the chosen AI. Defaults: claude opus, codex gpt-5.6-terra, "
+                                   "opencode opencode-go/deepseek-v4.1-flash (required for the OpenAI API).")
+    t.add_argument("--effort", help="How hard the AI thinks: low, medium, high or max "
+                                    "(default: medium; opencode's DeepSeek: high).")
     t.add_argument("--build", action=argparse.BooleanOptionalAction, default=None,
                    help=f"Also make the tailored PDFs (default: yes if --theme, --accent or --ats is given, "
                         f"else `build:` in {CONFIG_NAME}, else no).")

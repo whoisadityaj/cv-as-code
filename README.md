@@ -143,7 +143,7 @@ my-cv/
 2. **Fact check (no AI, plain code).** easy-ai-resume compares the copy with your originals and warns about
    anything new or changed: numbers, dates, employers, job titles, schools, skills in your skills list, projects
    and contact details.
-3. **You review.** It prints `diff` commands that show every change. Fix anything wrong in the tailored YAML,
+3. **You review.** `tailored/job/changes.diff` lists every change (`-` your original, `+` tailored). Fix anything wrong in the tailored YAML,
    then rebuild with `easy-ai-resume build tailored/job/*.yaml --out tailored/job`.
 
 ```text
@@ -209,7 +209,8 @@ can read it. Try the same with `sidebar` and you'll see the two columns mixed to
 | `--out folder` | build, tailor | Write the files somewhere else |
 | `--html-only` / `--html` | build | Write an HTML file instead of / as well as the PDF |
 | `--provider claude` | tailor | Use this AI: `claude`, `codex`, `opencode` (subscriptions), `anthropic`, `openai` (API keys). Default: the first that works |
-| `--model <name>` | tailor | Model for that AI (needed for `openai`) |
+| `--model <name>` | tailor | Model for that AI. Defaults: Claude `opus`, Codex `gpt-5.6-terra`, opencode `opencode-go/deepseek-v4.1-flash` (needed for `openai`) |
+| `--effort medium` | tailor | How hard it thinks: low, medium, high, max. Default: medium (opencode: high) |
 | `--force` | init, tailor | Overwrite files from an earlier run |
 | `--strict` | tailor | Exit with code 2 when the fact check warns (for scripts) |
 

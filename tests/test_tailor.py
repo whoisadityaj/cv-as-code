@@ -193,3 +193,45 @@ def test_check_facts_flags_invented_startups(cv, letter):
     new_cv = copy.deepcopy(cv)
     new_cv["startups"].append({"name": "Unicorn AI"})
     assert "startup not in original: Unicorn AI" in t.check_facts(cv, new_cv, letter, letter)
+
+
+def test_subscription_tools_default_to_a_capable_model_at_medium_effort(monkeypatch):
+    seen = _fake_run(monkeypatch, stdout="{}")
+    t.call_claude_cli("PROMPT", None)
+    cmd = seen["cmd"]
+    assert cmd[cmd.index("--model") + 1] == "opus" and cmd[cmd.index("--effort") + 1] == "medium"
+
+    t.call_opencode_cli("PROMPT", None)
+    assert seen["cmd"][seen["cmd"].index("-m") + 1] == "opencode-go/deepseek-v4.1-flash#high"
+
+    seen = _fake_run(monkeypatch, write="{}")
+    t.call_codex_cli("PROMPT", None, effort="low")
+    assert 'model_reasoning_effort="low"' in seen["cmd"] and "gpt-5.6-terra" in seen["cmd"]
+    assert "opus, medium effort" in t.describe("claude")
+
+
+def test_falls_back_to_the_tools_own_model_when_ours_isnt_on_the_plan(monkeypatch, capsys):
+    calls = []
+
+    def run(cmd, **kw):
+        calls.append(cmd)
+        if "-m" in cmd:
+            return subprocess.CompletedProcess(cmd, 1, "", "Error: model not found: opencode-go/deepseek-v4.1-flash")
+        return subprocess.CompletedProcess(cmd, 0, '{"ok": 1}', "")
+
+    monkeypatch.setattr(t.subprocess, "run", run)
+    assert t.call_opencode_cli("PROMPT", None) == '{"ok": 1}'
+    assert len(calls) == 2 and "trying its default model" in capsys.readouterr().err
+    with pytest.raises(t.TailorError):  # a model you chose yourself is never swapped
+        t.call_opencode_cli("PROMPT", "opencode-go/deepseek-v4.1-flash")
+
+
+def test_changes_diff_shows_only_real_changes(tmp_path, monkeypatch, cv, letter):
+    tailored = copy.deepcopy(cv)
+    tailored["summary"] = "Backend engineer focused on payments."
+    fake, _ = _fake_llm({"cv": tailored, "cover_letter": letter})
+    monkeypatch.setitem(t.CALLERS, "anthropic", fake)
+    t.tailor(EXAMPLES / "job.md", EXAMPLES / "cv.yaml", EXAMPLES / "cover_letter.yaml", tmp_path, provider="anthropic")
+    diff = (tmp_path / "changes.diff").read_text()
+    changed = [l for l in diff.splitlines() if l[:1] in "+-" and not l.startswith(("+++", "---"))]
+    assert changed == [f"-summary: {cv['summary']}", "+summary: Backend engineer focused on payments."]

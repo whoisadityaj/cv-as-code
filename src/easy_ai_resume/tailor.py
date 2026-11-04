@@ -6,6 +6,8 @@ that looks invented or changed. Always review the diff before sending.
 """
 from __future__ import annotations
 
+import copy
+import difflib
 import json
 import os
 import re
@@ -38,9 +40,16 @@ HARD RULES — breaking any of these is a failure:
     (and `recipient.team` if obvious) from the JD. Use "Dear Hiring Manager,"
     unless the JD names a person.
 
-Style: lead with the most relevant experience, use the JD's vocabulary only
-where the candidate truly has that experience, keep every existing number,
-no filler like "self-motivated team player".
+Style: be decisive, a recruiter reads this in seconds.
+  - Summary: 2-3 sentences aimed at this job, leading with the candidate's
+    most relevant real experience.
+  - Reorder items inside every section (skills, bullets, startups, projects)
+    so the ones that matter for this job come first.
+  - For each role keep the 3-5 bullets that best fit the job, reworded to
+    lead with the relevant result. Drop or shorten the rest.
+  - Use the JD's vocabulary only where the candidate truly has that
+    experience. Keep every existing number. No filler like "self-motivated
+    team player".
 
 Return ONLY a JSON object:
 {"cv": {...}, "cover_letter": {...}, "notes": "2-3 short bullets on what you changed"}
@@ -120,27 +129,74 @@ def _run(name: str, cmd: list[str], cwd: str, stdin: str | None = None) -> str:
     return out
 
 
-def call_claude_cli(prompt: str, model: str | None) -> str:
-    # No tools: it can only answer. Our instructions replace Claude Code's own system prompt.
-    cmd = ["claude", "-p", "--tools", "", "--output-format", "text", "--no-session-persistence",
-           "--system-prompt", SYSTEM_PROMPT, *(["--model", model] if model else [])]
-    with tempfile.TemporaryDirectory() as empty:  # an empty folder: nothing of yours to read
-        return _run("claude", cmd, empty, stdin=prompt)
+# A capable model at medium effort for each tool: tailoring needs judgement, not speed.
+# --model / --effort override these. If a default model isn't on someone's plan, the
+# tool's own default model is used instead.
+DEFAULT_MODELS = {
+    "claude": ("opus", "medium"),  # always the latest Opus
+    "codex": ("gpt-5.6-terra", "medium"),  # the balanced tier ChatGPT plans can use
+    "opencode": ("opencode-go/deepseek-v4.1-flash", "high"),  # newest DeepSeek; efforts: high, max
+}
+MODEL_ERROR = re.compile(r"model|variant", re.IGNORECASE)
 
 
-def call_codex_cli(prompt: str, model: str | None) -> str:
-    with tempfile.TemporaryDirectory() as empty:
-        answer = Path(empty) / "answer.txt"
-        cmd = ["codex", "exec", "--skip-git-repo-check", "--sandbox", "read-only", "--ephemeral",
-               "-C", empty, "-o", str(answer), *(["-m", model] if model else []), "-"]
-        _run("codex", cmd, empty, stdin=f"{SYSTEM_PROMPT}\n\n{prompt}")
-        return answer.read_text(encoding="utf-8") if answer.exists() else ""
+def model_and_effort(name: str, model: str | None, effort: str | None) -> tuple[str | None, str | None]:
+    default_model, default_effort = DEFAULT_MODELS.get(name, (None, None))
+    return model or default_model, effort or (default_effort if not model else None)
 
 
-def call_opencode_cli(prompt: str, model: str | None) -> str:
-    cmd = ["opencode", "run", *(["-m", model] if model else []), f"{SYSTEM_PROMPT}\n\n{prompt}"]
-    with tempfile.TemporaryDirectory() as empty:
-        return _run("opencode", cmd, empty)
+def describe(name: str, model: str | None = None, effort: str | None = None) -> str:
+    model, effort = model_and_effort(name, model, effort)
+    detail = ", ".join(x for x in (model, effort and f"{effort} effort") if x)
+    return f"{LABELS.get(name, name)}{f' ({detail})' if detail else ''}"
+
+
+def _with_fallback(name: str, model: str | None, effort: str | None, run) -> str:
+    """Run with our default model; if the tool rejects that model, retry with its own default."""
+    chosen, level = model_and_effort(name, model, effort)
+    try:
+        return run(chosen, level)
+    except TailorError as e:
+        if model or not MODEL_ERROR.search(str(e)):
+            raise
+        print(f"  {name} can't use {chosen} on your plan; trying its default model", file=sys.stderr)
+        return run(None, effort)
+
+
+def call_claude_cli(prompt: str, model: str | None, effort: str | None = None) -> str:
+    def run(model, effort):
+        # No tools: it can only answer. Our instructions replace Claude Code's own system prompt.
+        cmd = ["claude", "-p", "--tools", "", "--output-format", "text", "--no-session-persistence",
+               "--system-prompt", SYSTEM_PROMPT, *(["--model", model] if model else []),
+               *(["--effort", effort] if effort else [])]
+        with tempfile.TemporaryDirectory() as empty:  # an empty folder: nothing of yours to read
+            return _run("claude", cmd, empty, stdin=prompt)
+
+    return _with_fallback("claude", model, effort, run)
+
+
+def call_codex_cli(prompt: str, model: str | None, effort: str | None = None) -> str:
+    def run(model, effort):
+        with tempfile.TemporaryDirectory() as empty:
+            answer = Path(empty) / "answer.txt"
+            cmd = ["codex", "exec", "--skip-git-repo-check", "--sandbox", "read-only", "--ephemeral",
+                   "-C", empty, "-o", str(answer), *(["-m", model] if model else []),
+                   *(["-c", f'model_reasoning_effort="{effort}"'] if effort else []), "-"]
+            _run("codex", cmd, empty, stdin=f"{SYSTEM_PROMPT}\n\n{prompt}")
+            return answer.read_text(encoding="utf-8") if answer.exists() else ""
+
+    return _with_fallback("codex", model, effort, run)
+
+
+def call_opencode_cli(prompt: str, model: str | None, effort: str | None = None) -> str:
+    def run(model, effort):
+        if model and effort and "#" not in model:
+            model = f"{model}#{effort}"  # opencode's effort is a model "variant"
+        cmd = ["opencode", "run", *(["-m", model] if model else []), f"{SYSTEM_PROMPT}\n\n{prompt}"]
+        with tempfile.TemporaryDirectory() as empty:
+            return _run("opencode", cmd, empty)
+
+    return _with_fallback("opencode", model, effort, run)
 
 
 # ----------------------------------------------------------------- APIs
@@ -326,6 +382,7 @@ def tailor(
     provider: str = "auto",
     model: str | None = None,
     force: bool = False,
+    effort: str | None = None,
 ) -> tuple[Path, Path, str, list[str]]:
     """Tailor both documents and write them to out_dir/cv.yaml and out_dir/cover_letter.yaml."""
     out_cv, out_letter = out_dir / "cv.yaml", out_dir / "cover_letter.yaml"
@@ -339,9 +396,10 @@ def tailor(
 
     errors = []
     for name in providers_to_try(provider):
-        print(f"Tailoring with {LABELS.get(name, name)}. This can take a minute or two...", file=sys.stderr)
+        print(f"Tailoring with {describe(name, model, effort)}. This can take a minute or two...", file=sys.stderr)
         try:
-            new_cv, new_letter, notes = parse_response(CALLERS[name](prompt, model))
+            extra = {"effort": effort} if effort and name in DEFAULT_MODELS else {}
+            new_cv, new_letter, notes = parse_response(CALLERS[name](prompt, model, **extra))
             break
         except TailorError as e:
             errors.append(f"  {name}: {e}")
@@ -358,4 +416,23 @@ def tailor(
     dump = lambda d: yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=100)  # noqa: E731
     out_cv.write_text(dump(new_cv), encoding="utf-8")
     out_letter.write_text(dump(new_letter), encoding="utf-8")
+    (out_dir / "changes.diff").write_text(
+        changes(cv, new_cv, cv_path.name, "cv.yaml") + changes(letter, new_letter, letter_path.name, "cover_letter.yaml"),
+        encoding="utf-8",
+    )
     return out_cv, out_letter, notes, warns
+
+
+def changes(before: dict[str, Any], after: dict[str, Any], old_name: str, new_name: str) -> str:
+    """Only what really changed. Both sides are written the same way, so comments, quotes and
+    line wrapping in your original don't show up as changes."""
+    def lines(data: dict[str, Any]) -> list[str]:
+        data = copy.deepcopy(data)
+        data.pop("photo", None)  # the path is rewritten for the new folder
+        if isinstance(data.get("sender"), dict):
+            data["sender"].pop("photo", None)
+        return yaml.safe_dump(data, sort_keys=False, allow_unicode=True, width=10**6).splitlines()
+
+    diff = difflib.unified_diff(lines(before), lines(after), f"original {old_name}", f"tailored {new_name}",
+                                lineterm="", n=1)
+    return "".join(f"{line}\n" for line in diff)

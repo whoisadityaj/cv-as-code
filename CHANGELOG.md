@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Better tailoring by default: Claude Code uses Opus at medium effort, Codex gpt-5.6-terra at medium,
+  opencode DeepSeek v4.1 Flash at high. It prints the model it uses. `--model` and the new `--effort`
+  change them; if a default model isn't on your plan, the tool's own default is used.
+- The tailoring prompt asks for a summary aimed at the job, the 3-5 best bullets per role, and the most
+  relevant items first in every section.
+- `changes.diff` in the tailored folder shows only real changes, instead of `diff` commands where
+  every line looked changed.
+
 ## 0.11.0 — 2026-11-05
 
 - **`tailor` works with your AI subscription, no API key needed.** It tries Claude Code, then Codex,
