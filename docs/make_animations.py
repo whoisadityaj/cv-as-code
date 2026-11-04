@@ -120,7 +120,7 @@ def banner() -> str:
 
   <rect x="60" y="170" width="560" height="262" rx="14" fill="{PANEL}" stroke="{BORDER}"/>
   <circle cx="82" cy="189" r="5" fill="#ff5f57"/><circle cx="100" cy="189" r="5" fill="#febc2e"/><circle cx="118" cy="189" r="5" fill="#28c840"/>
-  <text x="600" y="194" text-anchor="end" font-family="{MONO}" font-size="12" fill="{MUTED}">cv.yaml</text>
+  <text x="600" y="194" text-anchor="end" font-family="{MONO}" font-size="12" fill="{MUTED}">input/cv.yaml</text>
   {"".join(rows)}
 
   <g transform="translate(630 284)">
@@ -154,10 +154,10 @@ def demo() -> str:
         out.append(typed(cmd, x0 + 20, y(row), at, secs, C, HIDE, size, uid))
 
     # Output lines match what the CLI really prints.
-    prompt(0, 0.8, "easy-ai-resume build cv.yaml --theme modern", 1.3, "c1")
-    line(1, 2.4, "wrote output/Jane_Doe_CV.html")
-    line(2, 2.6, "wrote output/Jane_Doe_CV.pdf", TEXT)
-    prompt(4, 4.0, "easy-ai-resume tailor job.md --cv cv.yaml --letter cover_letter.yaml --out tailored/umbrella", 2.4, "c2")
+    prompt(0, 0.8, "easy-ai-resume build --theme modern", 1.3, "c1")
+    line(1, 2.4, "wrote output/Jane_Doe_CV.pdf", TEXT)
+    line(2, 2.6, "wrote output/Jane_Doe_Cover_Letter.pdf", TEXT)
+    prompt(4, 4.0, "easy-ai-resume tailor input/umbrella.md --build", 2.4, "c2")
     line(5, 6.8, "wrote tailored/umbrella/cv.yaml", TEXT)
     line(6, 7.0, "wrote tailored/umbrella/cover_letter.yaml", TEXT)
     line(7, 7.9, "Check these before sending (possible invented or changed facts):", ORANGE)
