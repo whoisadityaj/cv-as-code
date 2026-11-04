@@ -101,3 +101,18 @@ def test_tailor_refuses_to_overwrite_without_force(tmp_path, monkeypatch, cv, le
 
     t.tailor(*args, provider="anthropic", force=True)
     assert yaml.safe_load((tmp_path / "cv.yaml").read_text())["name"] == "Jane Doe"
+
+
+def test_tailored_copy_still_finds_the_photo(tmp_path, monkeypatch, cv, letter):
+    # The tailored YAML lives in another folder, so `photo: jane.png` must be rewritten.
+    cv["photo"] = "something-the-model-made-up.png"
+    fake, _ = _fake_llm({"cv": cv, "cover_letter": letter})
+    monkeypatch.setitem(t.CALLERS, "anthropic", fake)
+    out = tmp_path / "tailored" / "acme"
+
+    out_cv, out_letter, _, _ = t.tailor(
+        EXAMPLES / "job.md", EXAMPLES / "cv.yaml", EXAMPLES / "cover_letter.yaml", out, provider="anthropic"
+    )
+    for path, photo in ((out_cv, yaml.safe_load(out_cv.read_text())["photo"]),
+                        (out_letter, yaml.safe_load(out_letter.read_text())["sender"]["photo"])):
+        assert (path.parent / photo).resolve() == (EXAMPLES / "jane.png").resolve()

@@ -93,7 +93,12 @@ def cmd_tailor(args: argparse.Namespace) -> int:
             print(f"  - {w}", file=sys.stderr)
     if build:
         for path in (out_cv, out_letter):
-            for p in build_file(path, out):
+            try:
+                written = build_file(path, out)
+            except (FileNotFoundError, ValueError) as e:
+                print(f"error: {e}", file=sys.stderr)
+                return 1
+            for p in written:
                 print(f"wrote {p}")
     print(f"\nReview what changed before sending:\n  diff -u {cv} {out_cv}\n  diff -u {letter} {out_letter}")
     return 2 if warns and args.strict else 0

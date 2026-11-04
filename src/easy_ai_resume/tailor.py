@@ -202,6 +202,25 @@ def check_facts(
 
 # ----------------------------------------------------------------- main flow
 
+def keep_photo(original: dict[str, Any], new: dict[str, Any], src_dir: Path, out_dir: Path) -> None:
+    """Copy `photo:` from the original, fixing a relative path for the tailored file's folder.
+
+    A relative photo path is read from the YAML file's folder. The tailored copy lives in
+    another folder, so `jane.png` has to become e.g. `../../input/jane.png` there.
+    """
+    photo = original.get("photo")
+    if not photo:
+        return
+    value = str(photo).strip()
+    if not value.startswith(("http://", "https://", "data:")) and not Path(value).expanduser().is_absolute():
+        target = (src_dir / value).resolve()
+        try:
+            value = os.path.relpath(target, out_dir.resolve())
+        except ValueError:  # Windows: different drives have no relative path
+            value = str(target)
+    new["photo"] = value
+
+
 def tailor(
     jd_path: Path,
     cv_path: Path,
@@ -223,7 +242,11 @@ def tailor(
 
     raw = CALLERS[pick_provider(provider)](prompt, model)
     new_cv, new_letter, notes = parse_response(raw)
-    warns = check_facts(yaml.safe_load(cv_yaml) or {}, new_cv, yaml.safe_load(letter_yaml) or {}, new_letter)
+    cv, letter = yaml.safe_load(cv_yaml) or {}, yaml.safe_load(letter_yaml) or {}
+    warns = check_facts(cv, new_cv, letter, new_letter)
+    keep_photo(cv, new_cv, cv_path.parent, out_dir)
+    if isinstance(new_letter.get("sender"), dict):
+        keep_photo(letter.get("sender") or {}, new_letter["sender"], letter_path.parent, out_dir)
 
     out_dir.mkdir(parents=True, exist_ok=True)
     dump = lambda d: yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=100)  # noqa: E731

@@ -65,3 +65,13 @@ def test_init_never_overwrites_without_force(tmp_path, capsys):
 def test_html_and_html_only_cannot_be_combined(tmp_path):
     with pytest.raises(SystemExit):
         main(["build", str(EXAMPLES / "cv.yaml"), "--out", str(tmp_path), "--html", "--html-only"])
+
+
+def test_tailor_build_with_a_photo_theme(tmp_path, monkeypatch, cv, letter):
+    cv["theme"] = letter["theme"] = "sidebar"
+    monkeypatch.setitem(t.CALLERS, "anthropic", lambda prompt, model: json.dumps({"cv": cv, "cover_letter": letter}))
+    monkeypatch.setattr("easy_ai_resume.build.write_pdf", lambda html, out: False)
+    args = ["tailor", str(EXAMPLES / "job.md"), "--cv", str(EXAMPLES / "cv.yaml"),
+            "--letter", str(EXAMPLES / "cover_letter.yaml"), "--out", str(tmp_path), "--provider", "anthropic",
+            "--build"]
+    assert main(args) == 0  # used to crash: photo not found next to the tailored copy
