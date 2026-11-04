@@ -139,8 +139,8 @@ def main(argv: list[str] | None = None) -> int:
                    help="Plain single-column output that job portals (ATS) read well, in output/ats/.")
     html = b.add_mutually_exclusive_group()
     html.add_argument("--html", action="store_true",
-                      help="Also write an HTML file. Without Pango you still get the HTML: print it to PDF in a browser.")
-    html.add_argument("--html-only", action="store_true", help=argparse.SUPPRESS)  # still works, for scripts
+                      help="Write the PDF and an HTML file. Without Pango you still get the HTML: print it to PDF in a browser.")
+    html.add_argument("--html-only", action="store_true", help="Write only the HTML file, no PDF.")
     b.set_defaults(func=cmd_build)
 
     t = sub.add_parser("tailor", help="Tailor your CV and cover letter to a job description with AI.")
@@ -164,8 +164,8 @@ def main(argv: list[str] | None = None) -> int:
     t.add_argument("--accent", help="Accent colour for the tailored PDFs, e.g. '#0f766e' (default: the YAML `accent:`, else deep red).")
     t.add_argument("--ats", action="store_true", help="Make the tailored PDFs in plain ATS-friendly mode.")
     t.add_argument("--force", action="store_true", help="Overwrite existing files in --out.")
-    # For scripts: exit with code 2 when the fact check warns.
-    t.add_argument("--strict", action="store_true", help=argparse.SUPPRESS)
+    t.add_argument("--strict", action="store_true",
+                   help="Exit with code 2 if the fact check warns (useful in scripts and GitHub Actions).")
     t.set_defaults(func=cmd_tailor)
 
     args = p.parse_args(argv)

@@ -207,11 +207,13 @@ can read it. Try the same with `sidebar` and you'll see the two columns mixed to
 | `--ats` | build, tailor | Plain ATS-friendly PDFs (`build` puts them in `output/ats/`) |
 | `--page-size fit` | build | a4, letter, legal, `fit` (one page exactly as tall as the content), or a CSS size like "210mm 380mm" |
 | `--out folder` | build, tailor | Write the files somewhere else |
-| `--html` | build | Also write an HTML file (works even when the PDF can't be made) |
+| `--html` | build | Write the PDF **and** an HTML file (you still get the HTML if the PDF can't be made) |
+| `--html-only` | build | Write only the HTML file, no PDF |
 | `--provider claude` | tailor | Use this AI: `claude`, `codex`, `opencode` (subscriptions), `anthropic`, `openai` (API keys). Default: the first that works |
 | `--model <name>` | tailor | Model for that AI. Defaults: Claude `opus`, Codex `gpt-6.1-sol`, opencode `opencode-go/deepseek-v4.1-flash` (needed for `openai`) |
 | `--effort medium` | tailor | How hard it thinks: low, medium, high, max. Default: medium (opencode: high) |
 | `--force` | init, tailor | Overwrite files from an earlier run |
+| `--strict` | tailor | Exit with code 2 when the fact check warns (for scripts and GitHub Actions) |
 
 `easy-ai-resume build --help` and `easy-ai-resume tailor --help` list everything.
 

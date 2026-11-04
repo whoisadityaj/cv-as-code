@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `--html-only` and `tailor --strict` are listed in `--help` and the README again.
+
 ## 0.13.0 — 2026-11-05
 
 - `build --ats` writes to `output/ats/`, so it no longer replaces your styled PDFs (`--out` still wins).
