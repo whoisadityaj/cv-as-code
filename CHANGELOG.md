@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.12.0 — 2026-11-05
 
 - Better tailoring by default: Claude Code uses Opus at medium effort, Codex gpt-5.6-terra at medium,
   opencode DeepSeek v4.1 Flash at high. It prints the model it uses. `--model` and the new `--effort`
