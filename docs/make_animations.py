@@ -106,7 +106,7 @@ def banner() -> str:
              f'<text x="{px + pw - 50}" y="{py + ph + 6}" text-anchor="middle" font-family="{SANS}" font-weight="700" '
              f'font-size="16" fill="#ffffff">PDF ready ✓</text></g>')
 
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="cv-as-code: YAML in, PDF out. Your CV as code.">
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="easy-ai-resume: YAML in, PDF out. Your CV as code.">
   <defs>
     <radialGradient id="glow" cx="80%" cy="0%" r="70%"><stop offset="0" stop-color="{BRAND}" stop-opacity=".45"/><stop offset="1" stop-color="{BRAND}" stop-opacity="0"/></radialGradient>
     <linearGradient id="arrow" x1="0" x2="1"><stop offset="0" stop-color="{BRIGHT}" stop-opacity=".2"/><stop offset="1" stop-color="{BRIGHT}"/></linearGradient>
@@ -115,7 +115,7 @@ def banner() -> str:
   <rect width="{W}" height="{H}" rx="24" fill="url(#glow)"/>
   <rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="24" fill="none" stroke="{BORDER}"/>
 
-  <text x="60" y="86" font-family="{MONO}" font-weight="700" font-size="46" fill="{TEXT}">cv<tspan fill="{BRIGHT}">-as-</tspan>code</text>
+  <text x="60" y="86" font-family="{MONO}" font-weight="700" font-size="46" fill="{TEXT}">easy<tspan fill="{BRIGHT}">-ai-</tspan>resume</text>
   <text x="60" y="124" font-family="{SANS}" font-size="20" fill="{MUTED}">Your CV lives in YAML. Build a clean PDF. AI tailors the YAML to each job, fact-checked.</text>
 
   <rect x="60" y="170" width="560" height="262" rx="14" fill="{PANEL}" stroke="{BORDER}"/>
@@ -154,16 +154,16 @@ def demo() -> str:
         out.append(typed(cmd, x0 + 20, y(row), at, secs, C, HIDE, size, uid))
 
     # Output lines match what the CLI really prints.
-    prompt(0, 0.8, "cv-as-code build cv.yaml --theme modern", 1.3, "c1")
+    prompt(0, 0.8, "easy-ai-resume build cv.yaml --theme modern", 1.3, "c1")
     line(1, 2.4, "wrote output/Jane_Doe_CV.html")
     line(2, 2.6, "wrote output/Jane_Doe_CV.pdf", TEXT)
-    prompt(4, 4.0, "cv-as-code tailor job.md --cv cv.yaml --letter cover_letter.yaml --out tailored/umbrella", 2.4, "c2")
+    prompt(4, 4.0, "easy-ai-resume tailor job.md --cv cv.yaml --letter cover_letter.yaml --out tailored/umbrella", 2.4, "c2")
     line(5, 6.8, "wrote tailored/umbrella/cv.yaml", TEXT)
     line(6, 7.0, "wrote tailored/umbrella/cover_letter.yaml", TEXT)
     line(7, 7.9, "Check these before sending (possible invented or changed facts):", ORANGE)
     line(8, 8.4, "  - numbers not in your originals (check metrics): 65%", ORANGE)
     line(9, 8.7, "  - skills not in original: rust", ORANGE)
-    line(11, 9.8, "# the AI rewords. cv-as-code makes sure it doesn't invent.", PINK)
+    line(11, 9.8, "# the AI rewords. easy-ai-resume makes sure it doesn't invent.", PINK)
 
     cursor_at = 10.4
     cursor = (f'<rect x="{x0}" y="{y(12) - 14}" width="9" height="18" fill="{TEXT}" opacity="0">'
@@ -172,7 +172,7 @@ def demo() -> str:
               f'{(cursor_at + 2) / C:.4f};{(cursor_at + 2.5) / C:.4f};{HIDE / C:.4f};1" calcMode="discrete" dur="{C}s" '
               f'repeatCount="indefinite"/></rect>')
 
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="Terminal demo: cv-as-code builds PDFs, then tailors a CV and flags an invented number and skill.">
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="Terminal demo: easy-ai-resume builds PDFs, then tailors a CV and flags an invented number and skill.">
   <rect width="{W}" height="{H}" rx="16" fill="{BG}"/>
   <rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="16" fill="none" stroke="{BORDER}"/>
   <path d="M0 16 Q0 0 16 0 H{W - 16} Q{W} 0 {W} 16 V44 H0 Z" fill="{PANEL}"/>
