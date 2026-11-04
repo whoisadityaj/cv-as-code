@@ -143,8 +143,11 @@ def main(argv: list[str] | None = None) -> int:
     t.add_argument("--out", type=Path,
                    help="Folder for the tailored YAML and PDFs (default: tailored/<job file name>, "
                         f"or `tailored:` in {CONFIG_NAME}).")
-    t.add_argument("--provider", choices=["auto", "anthropic", "openai"], default="auto")
-    t.add_argument("--model", help="Model name (default: Anthropic's Claude Sonnet; required for OpenAI).")
+    t.add_argument("--provider", choices=["auto", "claude", "codex", "opencode", "anthropic", "openai"], default="auto",
+                   help="auto (default) tries your installed subscription tools (claude, codex, opencode), "
+                        "then API keys (anthropic, openai).")
+    t.add_argument("--model", help="Model name for the chosen provider (default: the tool's own default; "
+                                   "required for the OpenAI API).")
     t.add_argument("--build", action=argparse.BooleanOptionalAction, default=None,
                    help=f"Also make the tailored PDFs (default: yes if --theme, --accent or --ats is given, "
                         f"else `build:` in {CONFIG_NAME}, else no).")

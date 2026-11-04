@@ -9,6 +9,10 @@ from __future__ import annotations
 import json
 import os
 import re
+import shutil
+import subprocess
+import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -59,14 +63,87 @@ def _short(error: Exception) -> str:
     return " ".join(str(error).split())[:300]
 
 
-def pick_provider(provider: str = "auto") -> str:
+# AI command-line tools that run on a subscription you already pay for, tried first (no API key,
+# no extra cost), then API keys. Each name is also a --provider value.
+SUBSCRIPTION_TOOLS = ("claude", "codex", "opencode")
+API_KEYS = {"anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY"}
+LABELS = {
+    "claude": "Claude Code (your Claude subscription)",
+    "codex": "Codex (your ChatGPT subscription)",
+    "opencode": "opencode",
+    "anthropic": "the Anthropic API",
+    "openai": "the OpenAI API",
+}
+NO_PROVIDER = (
+    "no AI to tailor with. Install and log in to one of these (uses your subscription):\n"
+    "  Claude Code: https://claude.com/claude-code\n"
+    "  Codex:       https://developers.openai.com/codex/cli\n"
+    "  opencode:    https://opencode.ai\n"
+    "or set an API key: export ANTHROPIC_API_KEY=... (or OPENAI_API_KEY with --model)"
+)
+
+
+def providers_to_try(provider: str = "auto") -> list[str]:
+    """`auto`: every installed subscription tool, then every API key that is set, in that order."""
     if provider != "auto":
-        return provider
-    if os.environ.get("ANTHROPIC_API_KEY"):
-        return "anthropic"
-    if os.environ.get("OPENAI_API_KEY"):
-        return "openai"
-    raise TailorError("set ANTHROPIC_API_KEY or OPENAI_API_KEY (or pass --provider)")
+        return [provider]
+    found = [name for name in SUBSCRIPTION_TOOLS if shutil.which(name)]
+    found += [name for name, key in API_KEYS.items() if os.environ.get(key)]
+    if not found:
+        raise TailorError(NO_PROVIDER)
+    return found
+
+
+def pick_provider(provider: str = "auto") -> str:
+    return providers_to_try(provider)[0]
+
+
+# ----------------------------------------------------------------- subscription tools
+
+ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+CLI_TIMEOUT = 15 * 60
+
+
+def _run(name: str, cmd: list[str], cwd: str, stdin: str | None = None) -> str:
+    """Run an AI command-line tool and return what it printed, or a one-line TailorError."""
+    try:
+        done = subprocess.run(cmd, input=stdin, capture_output=True, text=True, cwd=cwd, timeout=CLI_TIMEOUT,
+                              stdin=None if stdin is not None else subprocess.DEVNULL)
+    except FileNotFoundError as e:
+        raise TailorError(f"{name} is not installed") from e
+    except subprocess.TimeoutExpired as e:
+        raise TailorError(f"{name} took longer than {CLI_TIMEOUT // 60} minutes") from e
+    out = ANSI.sub("", done.stdout or "")
+    if done.returncode != 0:
+        lines = [l for l in ANSI.sub("", f"{done.stderr}\n{out}").splitlines() if l.strip()]
+        raise TailorError(f"{name} failed: {_short(lines[-1]) if lines else f'exit code {done.returncode}'}")
+    return out
+
+
+def call_claude_cli(prompt: str, model: str | None) -> str:
+    # No tools: it can only answer. Our instructions replace Claude Code's own system prompt.
+    cmd = ["claude", "-p", "--tools", "", "--output-format", "text", "--no-session-persistence",
+           "--system-prompt", SYSTEM_PROMPT, *(["--model", model] if model else [])]
+    with tempfile.TemporaryDirectory() as empty:  # an empty folder: nothing of yours to read
+        return _run("claude", cmd, empty, stdin=prompt)
+
+
+def call_codex_cli(prompt: str, model: str | None) -> str:
+    with tempfile.TemporaryDirectory() as empty:
+        answer = Path(empty) / "answer.txt"
+        cmd = ["codex", "exec", "--skip-git-repo-check", "--sandbox", "read-only", "--ephemeral",
+               "-C", empty, "-o", str(answer), *(["-m", model] if model else []), "-"]
+        _run("codex", cmd, empty, stdin=f"{SYSTEM_PROMPT}\n\n{prompt}")
+        return answer.read_text(encoding="utf-8") if answer.exists() else ""
+
+
+def call_opencode_cli(prompt: str, model: str | None) -> str:
+    cmd = ["opencode", "run", *(["-m", model] if model else []), f"{SYSTEM_PROMPT}\n\n{prompt}"]
+    with tempfile.TemporaryDirectory() as empty:
+        return _run("opencode", cmd, empty)
+
+
+# ----------------------------------------------------------------- APIs
 
 
 def call_anthropic(prompt: str, model: str | None) -> str:
@@ -108,7 +185,10 @@ def call_openai(prompt: str, model: str | None) -> str:
     return resp.choices[0].message.content or ""
 
 
-CALLERS = {"anthropic": call_anthropic, "openai": call_openai}
+CALLERS = {
+    "claude": call_claude_cli, "codex": call_codex_cli, "opencode": call_opencode_cli,
+    "anthropic": call_anthropic, "openai": call_openai,
+}
 
 
 # ----------------------------------------------------------------- parsing
@@ -257,8 +337,17 @@ def tailor(
     letter_yaml = letter_path.read_text(encoding="utf-8")
     prompt = build_prompt(jd_path.read_text(encoding="utf-8"), cv_yaml, letter_yaml)
 
-    raw = CALLERS[pick_provider(provider)](prompt, model)
-    new_cv, new_letter, notes = parse_response(raw)
+    errors = []
+    for name in providers_to_try(provider):
+        print(f"Tailoring with {LABELS.get(name, name)}. This can take a minute or two...", file=sys.stderr)
+        try:
+            new_cv, new_letter, notes = parse_response(CALLERS[name](prompt, model))
+            break
+        except TailorError as e:
+            errors.append(f"  {name}: {e}")
+            print(f"  {name} didn't work: {e}", file=sys.stderr)
+    else:
+        raise TailorError("no AI could tailor your files:\n" + "\n".join(errors) + f"\n\n{NO_PROVIDER}")
     cv, letter = yaml.safe_load(cv_yaml) or {}, yaml.safe_load(letter_yaml) or {}
     warns = check_facts(cv, new_cv, letter, new_letter)
     keep_photo(cv, new_cv, cv_path.parent, out_dir)

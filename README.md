@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://github.com/whoisadityaj/easy-ai-resume/actions/workflows/ci.yml"><img src="https://github.com/whoisadityaj/easy-ai-resume/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-b3122e" alt="MIT license"></a>
-  <img src="https://img.shields.io/badge/AI-Claude%20%7C%20OpenAI-5c0a1a" alt="Works with Claude or OpenAI">
+  <img src="https://img.shields.io/badge/AI-Claude%20%7C%20Codex%20%7C%20opencode-5c0a1a" alt="Works with Claude, Codex, opencode or OpenAI">
 </p>
 
 <h1 align="center">easy-ai-resume</h1>
@@ -109,12 +109,21 @@ Your CV and cover letter PDFs are in `output/`, in the default look: `classic`, 
 Paste the job post into `input/job.md`, then:
 
 ```bash
-export ANTHROPIC_API_KEY=your-key                # once per terminal (Windows: $env:ANTHROPIC_API_KEY="your-key")
 easy-ai-resume tailor input/job.md --build       # add --ats or --theme sidebar for that look
 ```
 
-Get a key at [console.anthropic.com](https://console.anthropic.com) (or use OpenAI: `OPENAI_API_KEY` and `--model`).
-Each run costs a little API credit. `build` never uses AI and works without a key.
+**No API key needed if you have an AI subscription.** It uses the first of these that's installed and
+logged in, and moves on to the next if one fails:
+
+1. [Claude Code](https://claude.com/claude-code) (`claude`, your Claude subscription)
+2. [Codex](https://developers.openai.com/codex/cli) (`codex`, your ChatGPT subscription)
+3. [opencode](https://opencode.ai) (`opencode`)
+4. An API key, if none of those work: `export ANTHROPIC_API_KEY=your-key` from
+   [console.anthropic.com](https://console.anthropic.com) (or `OPENAI_API_KEY` with `--model`). Each run costs a little credit.
+
+Pick one with `--provider claude` (or `codex`, `opencode`, `anthropic`, `openai`). The tool runs in an
+empty temporary folder and gets only your CV, letter and the job post (Claude Code with its tools off,
+Codex read-only). It counts toward your subscription's usage limits. `build` never uses AI.
 
 ```text
 my-cv/
@@ -127,7 +136,7 @@ my-cv/
 
 **How tailoring works, in plain words:**
 
-1. **AI step.** Your `cv.yaml`, `cover_letter.yaml` and the job post are sent to the AI (Claude by default).
+1. **AI step.** Your `cv.yaml`, `cover_letter.yaml` and the job post are sent to the AI (your subscription tool, or the API).
    It returns a reworded *copy*: the most relevant experience first, bullets that don't fit dropped, the job's
    words used where you really have that experience, and a cover letter written for that company. It is told never
    to add facts. Your files in `input/` are never changed.
@@ -199,7 +208,8 @@ can read it. Try the same with `sidebar` and you'll see the two columns mixed to
 | `--page-size fit` | build | a4, letter, legal, `fit` (one page exactly as tall as the content), or a CSS size like "210mm 380mm" |
 | `--out folder` | build, tailor | Write the files somewhere else |
 | `--html-only` / `--html` | build | Write an HTML file instead of / as well as the PDF |
-| `--provider openai --model <name>` | tailor | Use OpenAI instead of Claude |
+| `--provider claude` | tailor | Use this AI: `claude`, `codex`, `opencode` (subscriptions), `anthropic`, `openai` (API keys). Default: the first that works |
+| `--model <name>` | tailor | Model for that AI (needed for `openai`) |
 | `--force` | init, tailor | Overwrite files from an earlier run |
 | `--strict` | tailor | Exit with code 2 when the fact check warns (for scripts) |
 

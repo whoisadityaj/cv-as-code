@@ -1,5 +1,7 @@
 import copy
 import json
+import subprocess
+from pathlib import Path
 
 import pytest
 import yaml
@@ -46,16 +48,65 @@ def test_check_facts_flags_invented_content(cv, letter):
         assert expected in warns
 
 
-def test_pick_provider(monkeypatch):
+def test_auto_tries_subscriptions_then_api_keys(monkeypatch):
+    installed = set()
+    monkeypatch.setattr(t.shutil, "which", lambda name: f"/bin/{name}" if name in installed else None)
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    with pytest.raises(t.TailorError):
-        t.pick_provider()
-    monkeypatch.setenv("OPENAI_API_KEY", "x")
-    assert t.pick_provider() == "openai"
+    with pytest.raises(t.TailorError, match="Claude Code"):
+        t.providers_to_try()  # nothing at all: says what to install
     monkeypatch.setenv("ANTHROPIC_API_KEY", "x")
-    assert t.pick_provider() == "anthropic"
-    assert t.pick_provider("openai") == "openai"
+    assert t.providers_to_try() == ["anthropic"]
+    installed |= {"opencode", "claude"}
+    assert t.providers_to_try() == ["claude", "opencode", "anthropic"]  # subscriptions first
+    assert t.providers_to_try("openai") == ["openai"]
+
+
+def test_auto_moves_on_when_one_fails(tmp_path, monkeypatch, cv, letter, capsys):
+    monkeypatch.setattr(t, "providers_to_try", lambda provider: ["claude", "opencode"])
+    monkeypatch.setitem(t.CALLERS, "claude", lambda p, m: (_ for _ in ()).throw(t.TailorError("Not logged in")))
+    monkeypatch.setitem(t.CALLERS, "opencode", lambda p, m: json.dumps({"cv": cv, "cover_letter": letter}))
+    t.tailor(EXAMPLES / "job.md", EXAMPLES / "cv.yaml", EXAMPLES / "cover_letter.yaml", tmp_path)
+    err = capsys.readouterr().err
+    assert "claude didn't work: Not logged in" in err and "Tailoring with opencode" in err
+
+    monkeypatch.setitem(t.CALLERS, "opencode", lambda p, m: "sorry, no JSON")
+    with pytest.raises(t.TailorError, match="no AI could tailor"):
+        t.tailor(EXAMPLES / "job.md", EXAMPLES / "cv.yaml", EXAMPLES / "cover_letter.yaml", tmp_path, force=True)
+
+
+def _fake_run(monkeypatch, stdout="", returncode=0, stderr="", write=None):
+    seen = {}
+
+    def run(cmd, **kw):
+        seen.update(cmd=cmd, **kw)
+        if write:
+            Path(cmd[cmd.index("-o") + 1]).write_text(write)
+        return subprocess.CompletedProcess(cmd, returncode, stdout, stderr)
+
+    monkeypatch.setattr(t.subprocess, "run", run)
+    return seen
+
+
+def test_claude_cli_answers_without_tools_in_an_empty_folder(monkeypatch):
+    seen = _fake_run(monkeypatch, stdout='\x1b[0m{"cv": {}}')
+    assert t.call_claude_cli("PROMPT", "sonnet") == '{"cv": {}}'  # colour codes removed
+    cmd = seen["cmd"]
+    assert cmd[:2] == ["claude", "-p"] and cmd[cmd.index("--tools") + 1] == ""
+    assert cmd[cmd.index("--system-prompt") + 1] == t.SYSTEM_PROMPT and cmd[-2:] == ["--model", "sonnet"]
+    assert seen["input"] == "PROMPT" and not any(Path(seen["cwd"]).iterdir() if Path(seen["cwd"]).exists() else [])
+
+
+def test_codex_cli_reads_the_last_message_file(monkeypatch):
+    seen = _fake_run(monkeypatch, stdout="lots of agent log", write='{"cv": 1}')
+    assert t.call_codex_cli("PROMPT", None) == '{"cv": 1}'
+    assert "read-only" in seen["cmd"] and seen["input"].endswith("PROMPT")
+
+
+def test_cli_failure_is_one_clear_line(monkeypatch):
+    _fake_run(monkeypatch, returncode=1, stderr="ERROR: model not supported\n")
+    with pytest.raises(t.TailorError, match="opencode failed: ERROR: model not supported"):
+        t.call_opencode_cli("PROMPT", None)
 
 
 def test_openai_needs_a_model(monkeypatch):

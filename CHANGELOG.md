@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- **`tailor` works with your AI subscription, no API key needed.** It tries Claude Code, then Codex,
+  then opencode (whichever is installed and logged in), then an API key, moving on when one fails.
+  `--provider claude|codex|opencode|anthropic|openai` picks one.
 - **Removed the `compact` theme.** It was `classic` at 8.7 pt, below the 10-12 pt recruiters read
   comfortably, and didn't save a page on real CVs. A YAML file that still says `theme: compact` gets
   `classic` with a note.
