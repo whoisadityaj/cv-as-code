@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from easy_ai_resume.build import TEMPLATES, build_file, detect_kind, output_stem, render, theme_names
@@ -111,3 +113,25 @@ def test_build_writes_only_the_pdf_by_default(tmp_path):
 def test_html_flag_writes_both(tmp_path):
     written = build_file(EXAMPLES / "cv.yaml", tmp_path, html=True)
     assert sorted(p.name for p in written) == ["Jane_Doe_CV.html", "Jane_Doe_CV.pdf"]
+
+
+def test_homebrew_lib_folders_are_added_on_macos(tmp_path, monkeypatch):
+    import os
+    import sys
+
+    from easy_ai_resume.build import use_homebrew_libraries
+
+    real, absent = tmp_path / "lib", str(tmp_path / "nope")
+    real.mkdir()
+    monkeypatch.setattr(sys, "platform", "darwin")
+    monkeypatch.setenv("DYLD_FALLBACK_LIBRARY_PATH", "/already/here")
+    use_homebrew_libraries((str(real), absent))
+    assert os.environ["DYLD_FALLBACK_LIBRARY_PATH"] == f"/already/here:{real}"
+    use_homebrew_libraries((str(real),))  # no duplicates on a second call
+    assert os.environ["DYLD_FALLBACK_LIBRARY_PATH"].count(str(real)) == 1
+
+
+def test_missing_file_error_says_where_it_looked(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    with pytest.raises(FileNotFoundError, match="cd my-cv"):
+        build_file(Path("cv.yaml"), tmp_path / "out")

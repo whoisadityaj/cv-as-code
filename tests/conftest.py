@@ -8,6 +8,9 @@ EXAMPLES = Path(__file__).resolve().parent.parent / "examples"
 
 
 def _weasyprint_usable() -> bool:
+    from easy_ai_resume.build import use_homebrew_libraries
+
+    use_homebrew_libraries()
     try:
         import weasyprint  # noqa: F401
     except Exception:

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import base64
 import datetime as _dt
+import os
 import re
 from dataclasses import dataclass
 import sys
@@ -87,7 +88,8 @@ def jinja_env() -> Environment:
 
 def load_yaml(path: Path) -> dict[str, Any]:
     if not path.exists():
-        raise FileNotFoundError(f"{path} not found")
+        where = "" if path.is_absolute() else f" in {Path.cwd()}"
+        raise FileNotFoundError(f"{path} not found{where}. Are you in the folder with your YAML files (e.g. `cd my-cv`)?")
     with path.open("r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
     if not isinstance(data, dict):
@@ -276,16 +278,34 @@ def render(
     return jinja_env().get_template(TEMPLATE_FOR[kind]).render(**ctx)
 
 
+HOMEBREW_LIB_DIRS = ("/opt/homebrew/lib", "/usr/local/lib")
+
+
+def use_homebrew_libraries(dirs: tuple[str, ...] = HOMEBREW_LIB_DIRS) -> None:
+    """On macOS, let WeasyPrint find Pango installed by Homebrew.
+
+    Python doesn't search Homebrew's lib folder by default. WeasyPrint looks libraries up
+    via ctypes, which reads DYLD_FALLBACK_LIBRARY_PATH at lookup time, so adding the folder
+    here (before importing WeasyPrint) works without the user exporting anything.
+    """
+    if sys.platform != "darwin":
+        return
+    current = [p for p in os.environ.get("DYLD_FALLBACK_LIBRARY_PATH", "").split(":") if p]
+    missing = [d for d in dirs if os.path.isdir(d) and d not in current]
+    if missing:
+        os.environ["DYLD_FALLBACK_LIBRARY_PATH"] = ":".join(current + missing)
+
+
 def write_pdf(html: str, out_pdf: Path) -> bool:
     """Write a PDF with WeasyPrint. Returns False (with a hint) if it isn't usable."""
+    use_homebrew_libraries()
     try:
         from weasyprint import HTML  # type: ignore
     except Exception as e:  # ImportError or missing native libraries (Pango)
         print(
             f"warning: PDF skipped, WeasyPrint is not usable ({e.__class__.__name__}: {str(e)[:120]}).\n"
             "         See https://doc.courtbouillon.org/weasyprint/stable/first_steps.html\n"
-            "         (macOS + Homebrew: brew install pango, then\n"
-            "          export DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib)\n"
+            "         (macOS: brew install pango)\n"
             "         or build with --html and use your browser's Print -> Save as PDF.",
             file=sys.stderr,
         )
