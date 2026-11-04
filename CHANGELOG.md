@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.13.0 — 2026-11-05
 
 - `build --ats` writes to `output/ats/`, so it no longer replaces your styled PDFs (`--out` still wins).
 - `--html` also covers the no-Pango case: you get the HTML file with a warning instead of an error.
