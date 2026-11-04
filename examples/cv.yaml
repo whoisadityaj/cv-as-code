@@ -19,7 +19,8 @@ theme: classic
 # Optional. Shown only by photo themes, never in ATS mode. Path is relative to this file.
 # `photo: none` means no photo.
 photo: jane.png
-# Optional. a4 (default), letter, legal, single, single-tall, single-short, or a CSS size.
+# Optional. a4 (default), letter, legal, fit (one page exactly as tall as the content, for
+# reading on screen), or a CSS size like "210mm 380mm".
 page: letter
 
 summary: >-

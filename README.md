@@ -95,7 +95,7 @@ Your CV and cover letter PDFs are in `output/`, in the default look: `classic`, 
    ```yaml
    theme: sidebar
    # accent: "#0f766e"   # optional: any hex colour instead of the default red
-   # page: a4            # a4 (default), letter, legal, single, single-tall, or "210mm 380mm"
+   # page: fit           # a4 (default), letter, fit = one page as tall as your content
    ```
 
 4. **For job portals**, also make a plain version that hiring software reads well ([why](#-ats-mode-for-job-portals)):
@@ -197,7 +197,7 @@ can read it. Try the same with `sidebar` and you'll see the two columns mixed to
 | `--theme sidebar` | build, tailor | Use this theme for this run |
 | `--accent "#0f766e"` | build, tailor | Use this colour for this run (default: red `#9b1b30`) |
 | `--ats` | build, tailor | Plain ATS-friendly PDFs |
-| `--page-size a4` | build | a4, letter, legal, single, single-tall, or a CSS size |
+| `--page-size fit` | build | a4, letter, legal, `fit` (one page exactly as tall as the content), or a CSS size like "210mm 380mm" |
 | `--out folder` | build, tailor | Write the files somewhere else |
 | `--html-only` / `--html` | build | Write an HTML file instead of / as well as the PDF |
 | `--provider openai --model <name>` | tailor | Use OpenAI instead of Claude |

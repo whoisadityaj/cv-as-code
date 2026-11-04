@@ -8,6 +8,8 @@
 - The `bold` cover letter now has its own look, a dark header band like the bold CV. It used to be
   the same as `sidebar`'s.
 - New `startups:` section for your own companies, shown before `projects:` with the same fields.
+- New `page: fit` (or `--page-size fit`): one page exactly as tall as your content, with no empty space
+  at the bottom. Better than the fixed `single` sizes for CVs read on screen.
 
 ## 0.9.0 — 2026-11-05
 
