@@ -45,11 +45,13 @@ def test_tailor_strict_exit_code(tmp_path, monkeypatch, cv, letter):
 def test_init_creates_starter_files_that_build(tmp_path, capsys):
     assert main(["init", str(tmp_path)]) == 0
     inp = tmp_path / "input"
-    assert sorted(p.name for p in inp.iterdir()) == ["cover_letter.yaml", "cv.yaml", "jane.png", "job.md"]
+    assert sorted(p.name for p in inp.iterdir()) == ["cover_letter.yaml", "cv.yaml", "job.md"]
     assert "easy-ai-resume build" in capsys.readouterr().out
     out = tmp_path / "out"
     assert main(["build", str(inp / "cv.yaml"), "--theme", "sidebar", "--html-only", "--out", str(out)]) == 0
-    assert "data:image/png;base64," in (out / "Jane_Doe_CV.html").read_text()  # photo found next to the YAML
+    assert "data:image" not in (out / "Jane_Doe_CV.html").read_text()  # no sample photo of Jane on your CV
+    assert "shows a photo" in capsys.readouterr().err  # you're told how to add yours
+    assert "# photo: me.jpg" in (inp / "cv.yaml").read_text()
 
 
 def test_init_never_overwrites_without_force(tmp_path, capsys):

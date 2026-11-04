@@ -32,7 +32,6 @@ packages = ["src/easy_ai_resume"]
 "examples/cv.yaml" = "easy_ai_resume/starter/cv.yaml"
 "examples/cover_letter.yaml" = "easy_ai_resume/starter/cover_letter.yaml"
 "examples/job.md" = "easy_ai_resume/starter/job.md"
-"examples/jane.png" = "easy_ai_resume/starter/jane.png"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
