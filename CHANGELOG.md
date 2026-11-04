@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.0 — 2026-11-04
+
+- `build` now writes **only the PDF** by default. Pass `--html` to also write the HTML file, or
+  `--html-only` to skip the PDF. If the PDF can't be made, the error suggests `--html`.
+
 ## 0.5.0 — 2026-11-04
 
 - **Renamed from cv-as-code to easy-ai-resume**: the package, the `easy-ai-resume` command, the
