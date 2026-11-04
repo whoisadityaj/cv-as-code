@@ -66,9 +66,11 @@ Stuck? Skip it. Build with `--html`, open the file in a browser, and **Print →
 
 ### 3. Install easy-ai-resume
 
-`cv-env` is a private folder for the tool. It doesn't touch anything else.
+Make one folder for your resume. The tool, your YAML files and your PDFs all live in it.
+`cv-env` (inside it) holds the tool and doesn't touch anything else.
 
 ```bash
+mkdir my-cv && cd my-cv
 python3 -m venv cv-env
 source cv-env/bin/activate        # Windows: cv-env\Scripts\activate
 pip install https://github.com/whoisadityaj/easy-ai-resume/archive/refs/heads/main.zip
@@ -78,8 +80,9 @@ pip install https://github.com/whoisadityaj/easy-ai-resume/archive/refs/heads/ma
 
 ### 4. Get the starter files
 
+In the same `my-cv` folder:
+
 ```bash
-mkdir my-cv && cd my-cv
 easy-ai-resume init
 ```
 
@@ -94,7 +97,7 @@ open output/Jane_Doe_CV.pdf       # Windows: start output\Jane_Doe_CV.pdf
 
 With no file names, `build` uses `cv.yaml` and `cover_letter.yaml` in this folder. Add `--html` to also get the HTML.
 
-> Run commands inside your `my-cv` folder, with `cv-env` activated (step 3).
+> Run every command inside `my-cv`, with `cv-env` activated (step 3).
 
 ### 6. Add your details
 
@@ -225,6 +228,7 @@ Save each job post as its own file and tailor each one:
 
 ```text
 my-cv/
+├── cv-env/                     ← the tool (step 3)
 ├── cv.yaml, cover_letter.yaml
 ├── jobs/acme-backend.md        ← one file per job post
 └── tailored/acme-backend/      ← tailored YAML + PDFs
