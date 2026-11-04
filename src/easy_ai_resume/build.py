@@ -163,7 +163,6 @@ class Theme:
 THEMES: dict[str, Theme] = {
     "bold": Theme(photo=True),  # its cover letter has a header band instead of a side band
     "classic": Theme(),
-    "compact": Theme(),
     "minimal": Theme(),
     "modern": Theme(letter_band=True),
     "executive": Theme(photo=True),
@@ -173,6 +172,11 @@ THEMES: dict[str, Theme] = {
 
 def theme_names() -> list[str]:
     return sorted(THEMES)
+
+
+# Themes that were removed, and what a YAML file that still names them gets instead.
+# compact was classic at 8.7 pt: below the 10-12 pt recruiters read comfortably.
+RETIRED_THEMES = {"compact": "classic"}
 
 
 def get_theme(name: str) -> Theme:
@@ -262,6 +266,7 @@ def render(
     """
     ats = bool(data.get("ats")) if ats is None else ats
     theme = theme or data.get("theme") or "classic"
+    theme = RETIRED_THEMES.get(theme, theme)
     spec = get_theme(theme)
     layout = "single" if ats else spec.layout
     ctx: dict[str, Any] = {
@@ -405,6 +410,9 @@ def build_file(
                   file=sys.stderr)
             size = "A4"
     page = render(data, kind, page_size=size, **look)
+    old = theme or data.get("theme")
+    if old in RETIRED_THEMES:
+        print(f"note ({path.name}): the {old} theme was removed; using {RETIRED_THEMES[old]}.", file=sys.stderr)
     note = missing_photo_note(data, kind, theme, ats)
     if note:
         print(f"note ({path.name}): {note}", file=sys.stderr)

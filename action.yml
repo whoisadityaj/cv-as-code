@@ -1,5 +1,5 @@
 name: easy-ai-resume
-description: Build your resume and cover letter PDFs from YAML on every push. 7 themes plus an ATS-friendly mode.
+description: Build your resume and cover letter PDFs from YAML on every push. 6 themes plus an ATS-friendly mode.
 branding:
   icon: file-text
   color: red
@@ -11,7 +11,7 @@ inputs:
     description: Output directory.
     default: output
   theme:
-    description: Theme override (classic, modern, compact, minimal, sidebar, bold or executive). Empty = use the YAML setting.
+    description: Theme override (classic, modern, minimal, sidebar, bold or executive). Empty = use the YAML setting.
     default: ""
   ats:
     description: Set to "true" for ATS-friendly plain output.

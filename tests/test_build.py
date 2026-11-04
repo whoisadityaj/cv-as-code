@@ -207,3 +207,11 @@ def test_page_fit_from_the_yaml(cv, tmp_path, monkeypatch, capsys):
     build_file(tmp_path / "cv.yaml", tmp_path, pdf=False)
     assert "size: A4;" in (tmp_path / "Jane_Doe_CV.html").read_text()
     assert "using A4" in capsys.readouterr().err
+
+
+def test_removed_compact_theme_falls_back_to_classic(cv, tmp_path, capsys):
+    cv["theme"] = "compact"
+    (tmp_path / "cv.yaml").write_text(yaml.safe_dump(cv))
+    build_file(tmp_path / "cv.yaml", tmp_path, pdf=False)
+    assert "theme-classic" in (tmp_path / "Jane_Doe_CV.html").read_text()
+    assert "compact theme was removed; using classic" in capsys.readouterr().err

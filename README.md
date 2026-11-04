@@ -161,7 +161,6 @@ Every theme uses the deep red in the pictures (`#9b1b30`) unless you set `accent
 | `modern` | Sans-serif, accent colour | ❌ |
 | `minimal` | Light type, labels in the margin | ❌ |
 | `classic` (default) | Serif, centred header | ❌ |
-| `compact` | Smaller type, fits more on a page | ❌ |
 
 No PDF because Pango won't install? `easy-ai-resume build --html-only`, open the HTML file in a browser, **Print → Save as PDF**.
 

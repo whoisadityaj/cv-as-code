@@ -11,7 +11,7 @@ contact:
   github: https://github.com/example
   location: Austin, TX
 
-# Optional. Pick a look: classic (default), modern, compact, minimal,
+# Optional. Pick a look: classic (default), modern, minimal,
 # or a photo theme: sidebar, executive, bold.
 theme: classic
 # Optional. Any hex colour. Default: "#9b1b30" (deep red, as in the README pictures).

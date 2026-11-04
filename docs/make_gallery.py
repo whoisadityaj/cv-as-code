@@ -25,7 +25,7 @@ WHITE, INK, MUTED_DARK, MUTED_LIGHT = (255, 255, 255), (17, 24, 39), (201, 166, 
 BRAND, BRIGHT, BLUSH = (179, 18, 46), (255, 92, 116), (255, 150, 165)
 ACCENT = DEFAULT_ACCENT  # pages in the images use the default accent, as users get it
 PHOTO_ORDER = ["sidebar", "bold", "executive"]
-CLEAN_ORDER = ["modern", "minimal", "classic", "compact"]
+CLEAN_ORDER = ["modern", "minimal", "classic"]
 
 
 # ----------------------------------------------------------------- rendering
@@ -143,7 +143,7 @@ def showcase(shots: dict[str, Image.Image], letters: dict[str, Image.Image]) -> 
 
     d = ImageDraw.Draw(canvas)
     d.text((80, 70), "One YAML file.", font=font(54, bold=True), fill=WHITE)
-    d.text((80, 134), "Seven good-looking PDFs.", font=font(54, bold=True), fill=BLUSH)
+    d.text((80, 134), "Six good-looking PDFs.", font=font(54, bold=True), fill=BLUSH)
     d.text((W - 80, H - 60), "every page rendered by easy-ai-resume from examples/", font=font(20), fill=MUTED_LIGHT, anchor="rs")
 
     place(canvas, page(letters["bold"], 400), (470, 610), angle=8)

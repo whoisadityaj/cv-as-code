@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- **Removed the `compact` theme.** It was `classic` at 8.7 pt, below the 10-12 pt recruiters read
+  comfortably, and didn't save a page on real CVs. A YAML file that still says `theme: compact` gets
+  `classic` with a note.
+
 ## 0.10.0 — 2026-11-05
 
 - **Fixed:** links in cover letter PDFs (LinkedIn, GitHub, website) couldn't be clicked, in any theme.
