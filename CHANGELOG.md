@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0 — 2026-11-04
+
+- With no file names, `build` and `tailor` use `cv.yaml` and `cover_letter.yaml` in the current
+  folder (the files `init` creates). The settings file is now only needed to change that.
+- Shorter, simpler README.
+
 ## 0.6.0 — 2026-11-04
 
 - `build` now writes **only the PDF** by default. Pass `--html` to also write the HTML file, or

@@ -252,7 +252,7 @@ Tip: keep the tailored YAML so you know what you sent where. The PDFs can always
 Keep your CV in a private repo. Copy [`examples/github-workflow.yml`](examples/github-workflow.yml) to `.github/workflows/cv.yml`:
 
 ```yaml
-- uses: whoisadityaj/easy-ai-resume@v0.6.0
+- uses: whoisadityaj/easy-ai-resume@v0.7.0
   with:
     files: cv.yaml cover_letter.yaml
     # theme: modern
