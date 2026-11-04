@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.0 — 2026-11-04
+
+- **Renamed from cv-as-code to easy-ai-resume**: the package, the `easy-ai-resume` command, the
+  Python import (`easy_ai_resume`) and the GitHub Action. Old GitHub links redirect.
+- The project file is now `easy-ai-resume.yaml`; an existing `cv-as-code.yaml` is still read.
+- GitHub Action: red Marketplace branding and the full list of themes.
+
 ## 0.4.0 — 2026-11-03
 
 - Optional `cv-as-code.yaml` project file (`cv`, `letter`, `output`, `tailored`, `build`), so
