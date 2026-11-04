@@ -1,8 +1,10 @@
-"""Starter files for `easy-ai-resume init`: the Jane Doe examples, ready to edit."""
+"""Starter files for `easy-ai-resume init`: the Jane Doe examples, ready to edit in input/."""
 from __future__ import annotations
 
 import shutil
 from pathlib import Path
+
+from .config import INPUT_DIR
 
 STARTER_FILES = ("cv.yaml", "cover_letter.yaml", "job.md", "jane.png")
 
@@ -15,8 +17,9 @@ def starter_dir() -> Path:
     return Path(__file__).resolve().parents[2] / "examples"
 
 
-def init(target: Path, force: bool = False) -> list[Path]:
-    """Copy the starter files into `target`. Never overwrites unless `force`."""
+def init(folder: Path, force: bool = False) -> list[Path]:
+    """Copy the starter files into `folder`/input/. Never overwrites unless `force`."""
+    target = folder / INPUT_DIR
     existing = [target / name for name in STARTER_FILES if (target / name).exists()]
     if existing and not force:
         raise FileExistsError(f"{existing[0]} already exists (use --force to overwrite)")

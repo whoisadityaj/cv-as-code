@@ -89,7 +89,7 @@ def jinja_env() -> Environment:
 def load_yaml(path: Path) -> dict[str, Any]:
     if not path.exists():
         where = "" if path.is_absolute() else f" in {Path.cwd()}"
-        raise FileNotFoundError(f"{path} not found{where}. Are you in the folder with your YAML files (e.g. `cd my-cv`)?")
+        raise FileNotFoundError(f"{path} not found{where}. Run this from your resume folder (the one that holds input/).")
     with path.open("r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
     if not isinstance(data, dict):

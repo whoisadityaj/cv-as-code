@@ -133,5 +133,5 @@ def test_homebrew_lib_folders_are_added_on_macos(tmp_path, monkeypatch):
 
 def test_missing_file_error_says_where_it_looked(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    with pytest.raises(FileNotFoundError, match="cd my-cv"):
+    with pytest.raises(FileNotFoundError, match="holds input/"):
         build_file(Path("cv.yaml"), tmp_path / "out")

@@ -1,8 +1,8 @@
 """Which files `build` and `tailor` use when you don't name any.
 
-By default they look in the current folder for `cv.yaml` and `cover_letter.yaml`
-(the names `easy-ai-resume init` creates). An optional `easy-ai-resume.yaml`
-changes that or sets other defaults:
+By default they look for `input/cv.yaml` and `input/cover_letter.yaml` (what
+`easy-ai-resume init` creates), then for `cv.yaml` and `cover_letter.yaml` in the
+current folder. An optional `easy-ai-resume.yaml` changes that or sets other defaults:
 
     cv: data/cv.yaml                 # default: cv.yaml
     letter: data/cover_letter.yaml   # default: cover_letter.yaml
@@ -24,6 +24,7 @@ CONFIG_NAME = "easy-ai-resume.yaml"
 LEGACY_CONFIG_NAMES = ("cv-as-code.yaml",)  # still read, from before the rename
 KEYS = ("cv", "letter", "output", "tailored", "build")
 DEFAULT_CV, DEFAULT_LETTER = "cv.yaml", "cover_letter.yaml"
+INPUT_DIR = "input"  # where `init` puts your files
 
 
 @dataclass(frozen=True)
@@ -41,7 +42,7 @@ def load_project(folder: Path | None = None) -> Project:
     folder = folder or Path.cwd()
 
     def existing(name: str) -> Path | None:
-        return folder / name if (folder / name).is_file() else None
+        return next((p for p in (folder / INPUT_DIR / name, folder / name) if p.is_file()), None)
 
     path = next((folder / n for n in (CONFIG_NAME, *LEGACY_CONFIG_NAMES) if (folder / n).is_file()), None)
     if path is None:

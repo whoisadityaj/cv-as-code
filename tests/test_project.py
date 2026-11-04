@@ -20,7 +20,8 @@ build: true
 @pytest.fixture
 def project(tmp_path, monkeypatch):
     """A CV folder laid out like a real one: data/, jds/ and an easy-ai-resume.yaml."""
-    init(tmp_path / "data")
+    init(tmp_path)
+    (tmp_path / "input").rename(tmp_path / "data")
     (tmp_path / "jds").mkdir()
     (tmp_path / "data" / "job.md").rename(tmp_path / "jds" / "Acme Senior SDET.md")
     (tmp_path / "easy-ai-resume.yaml").write_text(CONFIG)
@@ -59,7 +60,7 @@ def test_build_without_paths_uses_the_project_file(project):
 def test_build_without_paths_or_project_file(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
     assert cli.main(["build"]) == 1
-    assert "easy-ai-resume.yaml" in capsys.readouterr().err
+    assert "easy-ai-resume init" in capsys.readouterr().err
 
 
 def _fake(monkeypatch, cv, letter):
@@ -97,10 +98,10 @@ def test_old_cv_as_code_project_file_still_works(project):
     assert cli.main(["build", "--html-only"]) == 0
 
 
-def test_build_with_no_names_uses_cv_and_cover_letter_here(tmp_path, monkeypatch):
-    init(tmp_path)  # creates cv.yaml and cover_letter.yaml, no settings file
+def test_build_with_no_names_uses_the_input_folder(tmp_path, monkeypatch):
+    init(tmp_path)  # creates input/cv.yaml and input/cover_letter.yaml, no settings file
     monkeypatch.chdir(tmp_path)
-    assert load_project().cv == tmp_path / "cv.yaml"
+    assert load_project().cv == tmp_path / "input" / "cv.yaml"
     assert cli.main(["build", "--html-only"]) == 0
     assert sorted(p.name for p in (tmp_path / "output").iterdir()) == ["Jane_Doe_CV.html", "Jane_Doe_Cover_Letter.html"]
 
@@ -109,5 +110,14 @@ def test_tailor_with_no_names_uses_the_default_files(tmp_path, monkeypatch, cv, 
     init(tmp_path)
     monkeypatch.chdir(tmp_path)
     _fake(monkeypatch, cv, letter)
-    assert cli.main(["tailor", "job.md", "--provider", "anthropic", "--no-build"]) == 0
+    assert cli.main(["tailor", "input/job.md", "--provider", "anthropic", "--no-build"]) == 0
     assert (tmp_path / "tailored" / "job" / "cv.yaml").is_file()
+
+
+def test_files_in_the_folder_itself_still_work(tmp_path, monkeypatch):
+    init(tmp_path)
+    for p in (tmp_path / "input").iterdir():
+        p.rename(tmp_path / p.name)
+    monkeypatch.chdir(tmp_path)
+    assert load_project().cv == tmp_path / "cv.yaml"
+    assert cli.main(["build", "--html-only"]) == 0

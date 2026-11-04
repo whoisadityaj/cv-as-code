@@ -44,20 +44,22 @@ def test_tailor_strict_exit_code(tmp_path, monkeypatch, cv, letter):
 
 def test_init_creates_starter_files_that_build(tmp_path, capsys):
     assert main(["init", str(tmp_path)]) == 0
-    assert sorted(p.name for p in tmp_path.iterdir()) == ["cover_letter.yaml", "cv.yaml", "jane.png", "job.md"]
+    inp = tmp_path / "input"
+    assert sorted(p.name for p in inp.iterdir()) == ["cover_letter.yaml", "cv.yaml", "jane.png", "job.md"]
     assert "easy-ai-resume build" in capsys.readouterr().out
     out = tmp_path / "out"
-    assert main(["build", str(tmp_path / "cv.yaml"), "--theme", "sidebar", "--html-only", "--out", str(out)]) == 0
+    assert main(["build", str(inp / "cv.yaml"), "--theme", "sidebar", "--html-only", "--out", str(out)]) == 0
     assert "data:image/png;base64," in (out / "Jane_Doe_CV.html").read_text()  # photo found next to the YAML
 
 
 def test_init_never_overwrites_without_force(tmp_path, capsys):
-    (tmp_path / "cv.yaml").write_text("my real cv")
+    (tmp_path / "input").mkdir()
+    (tmp_path / "input" / "cv.yaml").write_text("my real cv")
     assert main(["init", str(tmp_path)]) == 1
     assert "already exists" in capsys.readouterr().err
-    assert (tmp_path / "cv.yaml").read_text() == "my real cv"
+    assert (tmp_path / "input" / "cv.yaml").read_text() == "my real cv"
     assert main(["init", str(tmp_path), "--force"]) == 0
-    assert "Jane Doe" in (tmp_path / "cv.yaml").read_text()
+    assert "Jane Doe" in (tmp_path / "input" / "cv.yaml").read_text()
 
 
 def test_html_and_html_only_cannot_be_combined(tmp_path):
