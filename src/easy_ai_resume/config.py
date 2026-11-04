@@ -1,7 +1,11 @@
-"""Optional project file, `easy-ai-resume.yaml`, so commands work without paths.
+"""Which files `build` and `tailor` use when you don't name any.
 
-    cv: data/cv.yaml                 # used by `build` and `tailor`
-    letter: data/cover_letter.yaml
+By default they look in the current folder for `cv.yaml` and `cover_letter.yaml`
+(the names `easy-ai-resume init` creates). An optional `easy-ai-resume.yaml`
+changes that or sets other defaults:
+
+    cv: data/cv.yaml                 # default: cv.yaml
+    letter: data/cover_letter.yaml   # default: cover_letter.yaml
     output: output                   # where `easy-ai-resume build` writes
     tailored: applications           # `tailor jobs/acme.md` writes to applications/acme/
     build: true                      # render PDFs after tailoring
@@ -19,6 +23,7 @@ import yaml
 CONFIG_NAME = "easy-ai-resume.yaml"
 LEGACY_CONFIG_NAMES = ("cv-as-code.yaml",)  # still read, from before the rename
 KEYS = ("cv", "letter", "output", "tailored", "build")
+DEFAULT_CV, DEFAULT_LETTER = "cv.yaml", "cover_letter.yaml"
 
 
 @dataclass(frozen=True)
@@ -34,9 +39,13 @@ class Project:
 def load_project(folder: Path | None = None) -> Project:
     """Read the project file from `folder` (default: the current folder), or return defaults."""
     folder = folder or Path.cwd()
+
+    def existing(name: str) -> Path | None:
+        return folder / name if (folder / name).is_file() else None
+
     path = next((folder / n for n in (CONFIG_NAME, *LEGACY_CONFIG_NAMES) if (folder / n).is_file()), None)
     if path is None:
-        return Project()
+        return Project(cv=existing(DEFAULT_CV), letter=existing(DEFAULT_LETTER))
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     if not isinstance(data, dict):
         raise ValueError(f"{path}: expected settings like `cv: cv.yaml`")
@@ -45,8 +54,8 @@ def load_project(folder: Path | None = None) -> Project:
         raise ValueError(f"{path}: unknown setting(s) {', '.join(unknown)}; allowed: {', '.join(KEYS)}")
     root = path.parent
     return Project(
-        cv=root / data["cv"] if data.get("cv") else None,
-        letter=root / data["letter"] if data.get("letter") else None,
+        cv=root / data["cv"] if data.get("cv") else existing(DEFAULT_CV),
+        letter=root / data["letter"] if data.get("letter") else existing(DEFAULT_LETTER),
         output=root / data.get("output", "output"),
         tailored=root / data.get("tailored", "tailored"),
         build=bool(data.get("build", False)),

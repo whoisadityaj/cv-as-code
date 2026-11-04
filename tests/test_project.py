@@ -95,3 +95,19 @@ def test_old_cv_as_code_project_file_still_works(project):
     (project / "easy-ai-resume.yaml").rename(project / "cv-as-code.yaml")
     assert load_project().found
     assert cli.main(["build", "--html-only"]) == 0
+
+
+def test_build_with_no_names_uses_cv_and_cover_letter_here(tmp_path, monkeypatch):
+    init(tmp_path)  # creates cv.yaml and cover_letter.yaml, no settings file
+    monkeypatch.chdir(tmp_path)
+    assert load_project().cv == tmp_path / "cv.yaml"
+    assert cli.main(["build", "--html-only"]) == 0
+    assert sorted(p.name for p in (tmp_path / "output").iterdir()) == ["Jane_Doe_CV.html", "Jane_Doe_Cover_Letter.html"]
+
+
+def test_tailor_with_no_names_uses_the_default_files(tmp_path, monkeypatch, cv, letter):
+    init(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    _fake(monkeypatch, cv, letter)
+    assert cli.main(["tailor", "job.md", "--provider", "anthropic", "--no-build"]) == 0
+    assert (tmp_path / "tailored" / "job" / "cv.yaml").is_file()

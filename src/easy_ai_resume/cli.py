@@ -20,7 +20,7 @@ def cmd_init(args: argparse.Namespace) -> int:
         return 1
     for p in written:
         print(f"wrote {p}")
-    print("\nNext: edit cv.yaml, then run:  easy-ai-resume build cv.yaml")
+    print("\nNext: edit cv.yaml, then run:  easy-ai-resume build")
     return 0
 
 
@@ -32,7 +32,8 @@ def cmd_build(args: argparse.Namespace) -> int:
         return 1
     files = args.files or [p for p in (project.cv, project.letter) if p]
     if not files:
-        print(f"error: give YAML files to build, or list them in {CONFIG_NAME} (cv: / letter:)", file=sys.stderr)
+        print("error: no cv.yaml or cover_letter.yaml in this folder. Give the YAML files to build, "
+              f"or name them in {CONFIG_NAME} (cv: / letter:).", file=sys.stderr)
         return 1
     out = args.out or project.output
     missing_pdf = False
@@ -65,7 +66,8 @@ def cmd_tailor(args: argparse.Namespace) -> int:
         return 1
     cv, letter = args.cv or project.cv, args.letter or project.letter
     if not cv or not letter:
-        print(f"error: pass --cv and --letter, or set cv: and letter: in {CONFIG_NAME}", file=sys.stderr)
+        print(f"error: need a CV and cover letter: put cv.yaml and cover_letter.yaml here, pass --cv and "
+              f"--letter, or set cv: and letter: in {CONFIG_NAME}", file=sys.stderr)
         return 1
     out = args.out or project.tailored / job_slug(args.jd)
     build = project.build if args.build is None else args.build
@@ -109,7 +111,7 @@ def main(argv: list[str] | None = None) -> int:
 
     b = sub.add_parser("build", help="Render CV / cover-letter YAML files to HTML and PDF.")
     b.add_argument("files", nargs="*", type=Path,
-                   help=f"YAML files (CV or cover letter, detected automatically). Default: cv/letter from {CONFIG_NAME}.")
+                   help="YAML files (CV or cover letter, detected automatically). Default: cv.yaml and cover_letter.yaml here.")
     b.add_argument("--out", type=Path, help=f"Output directory (default: ./output, or `output:` in {CONFIG_NAME}).")
     b.add_argument(
         "--page-size", default="",
@@ -124,8 +126,8 @@ def main(argv: list[str] | None = None) -> int:
 
     t = sub.add_parser("tailor", help="Tailor your CV and cover letter to a job description with AI.")
     t.add_argument("jd", type=Path, help="Job description (text or Markdown file).")
-    t.add_argument("--cv", type=Path, help=f"Your CV YAML (default: `cv:` in {CONFIG_NAME}).")
-    t.add_argument("--letter", type=Path, help=f"Your cover-letter YAML (default: `letter:` in {CONFIG_NAME}).")
+    t.add_argument("--cv", type=Path, help="Your CV YAML (default: cv.yaml here).")
+    t.add_argument("--letter", type=Path, help="Your cover-letter YAML (default: cover_letter.yaml here).")
     t.add_argument("--out", type=Path,
                    help="Folder for the tailored YAML and PDFs (default: tailored/<job file name>, "
                         f"or `tailored:` in {CONFIG_NAME}).")

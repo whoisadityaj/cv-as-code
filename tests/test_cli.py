@@ -45,7 +45,7 @@ def test_tailor_strict_exit_code(tmp_path, monkeypatch, cv, letter):
 def test_init_creates_starter_files_that_build(tmp_path, capsys):
     assert main(["init", str(tmp_path)]) == 0
     assert sorted(p.name for p in tmp_path.iterdir()) == ["cover_letter.yaml", "cv.yaml", "jane.png", "job.md"]
-    assert "easy-ai-resume build cv.yaml" in capsys.readouterr().out
+    assert "easy-ai-resume build" in capsys.readouterr().out
     out = tmp_path / "out"
     assert main(["build", str(tmp_path / "cv.yaml"), "--theme", "sidebar", "--html-only", "--out", str(out)]) == 0
     assert "data:image/png;base64," in (out / "Jane_Doe_CV.html").read_text()  # photo found next to the YAML
