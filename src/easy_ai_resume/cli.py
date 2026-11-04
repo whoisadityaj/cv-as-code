@@ -70,7 +70,9 @@ def cmd_tailor(args: argparse.Namespace) -> int:
               f"--letter, or set cv: and letter: in {CONFIG_NAME}", file=sys.stderr)
         return 1
     out = args.out or project.tailored / job_slug(args.jd)
-    build = project.build if args.build is None else args.build
+    look = {"theme": args.theme, "accent": args.accent, "ats": True if args.ats else None}
+    asked_for_look = any(v is not None for v in look.values())
+    build = (project.build or asked_for_look) if args.build is None else args.build
     for p in (args.jd, cv, letter):
         if not p.exists():
             print(f"error: {p} not found", file=sys.stderr)
@@ -94,7 +96,7 @@ def cmd_tailor(args: argparse.Namespace) -> int:
     if build:
         for path in (out_cv, out_letter):
             try:
-                written = build_file(path, out)
+                written = build_file(path, out, **look)
             except (FileNotFoundError, ValueError) as e:
                 print(f"error: {e}", file=sys.stderr)
                 return 1
@@ -140,7 +142,11 @@ def main(argv: list[str] | None = None) -> int:
     t.add_argument("--provider", choices=["auto", "anthropic", "openai"], default="auto")
     t.add_argument("--model", help="Model name (default: Anthropic's Claude Sonnet; required for OpenAI).")
     t.add_argument("--build", action=argparse.BooleanOptionalAction, default=None,
-                   help=f"Also render the tailored documents (default: `build:` in {CONFIG_NAME}, else no).")
+                   help=f"Also make the tailored PDFs (default: yes if --theme, --accent or --ats is given, "
+                        f"else `build:` in {CONFIG_NAME}, else no).")
+    t.add_argument("--theme", choices=theme_names(), help="Theme for the tailored PDFs (default: the YAML `theme:`).")
+    t.add_argument("--accent", help="Accent colour for the tailored PDFs, e.g. '#9b1b30'.")
+    t.add_argument("--ats", action="store_true", help="Make the tailored PDFs in plain ATS-friendly mode.")
     t.add_argument("--force", action="store_true", help="Overwrite existing files in --out.")
     t.add_argument("--strict", action="store_true", help="Exit with code 2 if the fact check raises warnings.")
     t.set_defaults(func=cmd_tailor)

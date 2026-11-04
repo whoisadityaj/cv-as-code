@@ -70,7 +70,7 @@ def _fake(monkeypatch, cv, letter):
 def test_tailor_uses_project_paths_and_names_the_folder_after_the_job(project, monkeypatch, capsys, cv, letter):
     _fake(monkeypatch, cv, letter)
     built = []
-    monkeypatch.setattr(cli, "build_file", lambda path, out: built.append((path.name, out)) or [])
+    monkeypatch.setattr(cli, "build_file", lambda path, out, **look: built.append((path.name, out)) or [])
     assert cli.main(["tailor", "jds/Acme Senior SDET.md", "--provider", "anthropic"]) == 0
 
     out = project / "applications" / "acme-senior-sdet"

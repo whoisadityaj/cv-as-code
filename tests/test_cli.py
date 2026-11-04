@@ -83,3 +83,13 @@ def test_build_accent_option(tmp_path, capsys):
     assert "#9b1b30" in (tmp_path / "Jane_Doe_CV.html").read_text()
     assert main(args + ["--accent", "red;}"]) == 1
     assert "accent must be" in capsys.readouterr().err
+
+
+def test_tailor_ats_builds_plain_pdfs(tmp_path, monkeypatch, cv, letter):
+    monkeypatch.setitem(t.CALLERS, "anthropic", lambda prompt, model: json.dumps({"cv": cv, "cover_letter": letter}))
+    seen = []
+    monkeypatch.setattr("easy_ai_resume.build.write_pdf", lambda html, out: seen.append(html) or False)
+    args = ["tailor", str(EXAMPLES / "job.md"), "--cv", str(EXAMPLES / "cv.yaml"),
+            "--letter", str(EXAMPLES / "cover_letter.yaml"), "--out", str(tmp_path), "--provider", "anthropic"]
+    assert main(args + ["--ats"]) == 0  # --ats alone is enough to build
+    assert len(seen) == 2 and all('class="photo"' not in html and "Arial" in html for html in seen)
