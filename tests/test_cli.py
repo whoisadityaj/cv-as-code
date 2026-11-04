@@ -29,8 +29,8 @@ def test_build_missing_file(tmp_path, capsys):
 def test_build_fails_when_pdf_cannot_be_made(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr("easy_ai_resume.build.write_pdf", lambda html, out: False)
     assert main(["build", str(EXAMPLES / "cv.yaml"), "--out", str(tmp_path)]) == 1
-    assert "PDF generation failed" in capsys.readouterr().err
-    assert (tmp_path / "Jane_Doe_CV.html").exists()
+    assert "use --html" in capsys.readouterr().err.lower()
+    assert not (tmp_path / "Jane_Doe_CV.html").exists()  # no HTML unless asked for
 
 
 def test_tailor_strict_exit_code(tmp_path, monkeypatch, cv, letter):
@@ -58,3 +58,8 @@ def test_init_never_overwrites_without_force(tmp_path, capsys):
     assert (tmp_path / "cv.yaml").read_text() == "my real cv"
     assert main(["init", str(tmp_path), "--force"]) == 0
     assert "Jane Doe" in (tmp_path / "cv.yaml").read_text()
+
+
+def test_html_and_html_only_cannot_be_combined(tmp_path):
+    with pytest.raises(SystemExit):
+        main(["build", str(EXAMPLES / "cv.yaml"), "--out", str(tmp_path), "--html", "--html-only"])

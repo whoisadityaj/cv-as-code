@@ -40,7 +40,7 @@ def cmd_build(args: argparse.Namespace) -> int:
         try:
             written = build_file(
                 path, out, page_size=args.page_size, pdf=not args.html_only,
-                theme=args.theme, ats=True if args.ats else None,
+                theme=args.theme, ats=True if args.ats else None, html=args.html,
             )
         except (FileNotFoundError, ValueError) as e:
             print(f"error: {e}", file=sys.stderr)
@@ -49,7 +49,8 @@ def cmd_build(args: argparse.Namespace) -> int:
             print(f"wrote {p}")
         missing_pdf |= not args.html_only and not any(p.suffix == ".pdf" for p in written)
     if missing_pdf:
-        print("error: HTML was written but PDF generation failed (use --html-only to skip PDFs).", file=sys.stderr)
+        print("error: PDF generation failed. Use --html to get an HTML file you can print to PDF "
+              "in a browser.", file=sys.stderr)
         return 1
     return 0
 
@@ -116,7 +117,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     b.add_argument("--theme", choices=theme_names(), help="Override the YAML `theme:` (default: classic).")
     b.add_argument("--ats", action="store_true", help="Plain single-column output that applicant-tracking systems parse well.")
-    b.add_argument("--html-only", action="store_true", help="Skip PDF generation.")
+    html = b.add_mutually_exclusive_group()
+    html.add_argument("--html", action="store_true", help="Also write the HTML file (by default only the PDF is written).")
+    html.add_argument("--html-only", action="store_true", help="Write only the HTML file, no PDF.")
     b.set_defaults(func=cmd_build)
 
     t = sub.add_parser("tailor", help="Tailor your CV and cover letter to a job description with AI.")

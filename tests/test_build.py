@@ -88,7 +88,7 @@ def test_examples_render_to_one_page_pdfs(tmp_path, theme, ats):
     from weasyprint import HTML
 
     for name in ("cv.yaml", "cover_letter.yaml"):
-        written = build_file(EXAMPLES / name, tmp_path, theme=theme, ats=ats)
+        written = build_file(EXAMPLES / name, tmp_path, theme=theme, ats=ats, html=True)
         html, pdf = written[0], [p for p in written if p.suffix == ".pdf"]
         assert pdf and pdf[0].read_bytes().startswith(b"%PDF"), f"no PDF for {name}"
         assert len(HTML(filename=str(html)).render().pages) == 1, f"{name} is not one page"
@@ -98,3 +98,16 @@ def test_custom_accent_also_sets_a_light_accent(cv):
     cv["accent"] = "#9b1b30"
     html = render(cv, "cv", theme="sidebar", base_dir=EXAMPLES)
     assert "--accent: #9b1b30; --accent-soft: #d7a4ac;" in html
+
+
+@needs_pdf
+def test_build_writes_only_the_pdf_by_default(tmp_path):
+    written = build_file(EXAMPLES / "cv.yaml", tmp_path)
+    assert [p.name for p in written] == ["Jane_Doe_CV.pdf"]
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["Jane_Doe_CV.pdf"]
+
+
+@needs_pdf
+def test_html_flag_writes_both(tmp_path):
+    written = build_file(EXAMPLES / "cv.yaml", tmp_path, html=True)
+    assert sorted(p.name for p in written) == ["Jane_Doe_CV.html", "Jane_Doe_CV.pdf"]

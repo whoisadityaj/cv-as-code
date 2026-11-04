@@ -286,7 +286,7 @@ def write_pdf(html: str, out_pdf: Path) -> bool:
             "         See https://doc.courtbouillon.org/weasyprint/stable/first_steps.html\n"
             "         (macOS + Homebrew: brew install pango, then\n"
             "          export DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib)\n"
-            "         or open the HTML in a browser and use Print -> Save as PDF.",
+            "         or build with --html and use your browser's Print -> Save as PDF.",
             file=sys.stderr,
         )
         return False
@@ -301,17 +301,22 @@ def build_file(
     pdf: bool = True,
     theme: str | None = None,
     ats: bool | None = None,
+    html: bool = False,
 ) -> list[Path]:
-    """Render one YAML file. Returns the files written (HTML first)."""
+    """Render one YAML file to PDF, plus the HTML only when `html` is set (or `pdf` is off).
+
+    Returns the files written.
+    """
     data = load_yaml(path)
     kind = detect_kind(data)
-    html = render(data, kind, page_size=resolve_page_size(page_size), theme=theme, ats=ats, base_dir=path.parent)
+    page = render(data, kind, page_size=resolve_page_size(page_size), theme=theme, ats=ats, base_dir=path.parent)
 
     out_dir.mkdir(parents=True, exist_ok=True)
     stem = output_stem(data, kind)
-    out_html = out_dir / f"{stem}.html"
-    out_html.write_text(html, encoding="utf-8")
-    written = [out_html]
-    if pdf and write_pdf(html, out_dir / f"{stem}.pdf"):
+    written = []
+    if html or not pdf:
+        (out_dir / f"{stem}.html").write_text(page, encoding="utf-8")
+        written.append(out_dir / f"{stem}.html")
+    if pdf and write_pdf(page, out_dir / f"{stem}.pdf"):
         written.append(out_dir / f"{stem}.pdf")
     return written
