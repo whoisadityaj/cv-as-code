@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- **Fixed:** links in cover letter PDFs (LinkedIn, GitHub, website) couldn't be clicked, in any theme.
+- **Fixed:** a large photo made each PDF over 2 MB, more than some job portals accept. Images are now
+  embedded at up to 300 dpi (print quality): a 2.1 MB CV becomes about 250 KB.
+- The `bold` cover letter now has its own look, a dark header band like the bold CV. It used to be
+  the same as `sidebar`'s.
+- New `startups:` section for your own companies, shown before `projects:` with the same fields.
+
 ## 0.9.0 — 2026-11-05
 
 - **Fixed:** `tailor --build` crashed with a photo theme (the tailored copy couldn't find the photo).
