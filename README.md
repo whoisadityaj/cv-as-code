@@ -94,8 +94,7 @@ open output/Jane_Doe_CV.pdf       # Windows: start output\Jane_Doe_CV.pdf
 
 With no file names, `build` uses `cv.yaml` and `cover_letter.yaml` in this folder. Add `--html` to also get the HTML.
 
-> **Mac: "PDF generation failed"?** Run `export DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib`.
-> Add it to `~/.zshrc` to make it permanent.
+> Run commands inside your `my-cv` folder, with `cv-env` activated (step 3).
 
 ### 6. Add your details
 
