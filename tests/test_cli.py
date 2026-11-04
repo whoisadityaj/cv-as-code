@@ -29,7 +29,7 @@ def test_build_missing_file(tmp_path, capsys):
 def test_build_fails_when_pdf_cannot_be_made(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr("easy_ai_resume.build.write_pdf", lambda html, out: False)
     assert main(["build", str(EXAMPLES / "cv.yaml"), "--out", str(tmp_path)]) == 1
-    assert "use --html" in capsys.readouterr().err.lower()
+    assert "--html-only" in capsys.readouterr().err  # --html alone still needs the PDF
     assert not (tmp_path / "Jane_Doe_CV.html").exists()  # no HTML unless asked for
 
 

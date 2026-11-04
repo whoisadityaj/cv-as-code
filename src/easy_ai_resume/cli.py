@@ -50,8 +50,8 @@ def cmd_build(args: argparse.Namespace) -> int:
             print(f"wrote {p}")
         missing_pdf |= not args.html_only and not any(p.suffix == ".pdf" for p in written)
     if missing_pdf:
-        print("error: PDF generation failed. Use --html to get an HTML file you can print to PDF "
-              "in a browser.", file=sys.stderr)
+        print("error: PDF generation failed. Run again with --html-only to get an HTML file, open it "
+              "in a browser and use Print -> Save as PDF.", file=sys.stderr)
         return 1
     return 0
 

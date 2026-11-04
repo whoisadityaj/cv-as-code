@@ -306,7 +306,7 @@ def write_pdf(html: str, out_pdf: Path) -> bool:
             f"warning: PDF skipped, WeasyPrint is not usable ({e.__class__.__name__}: {str(e)[:120]}).\n"
             "         See https://doc.courtbouillon.org/weasyprint/stable/first_steps.html\n"
             "         (macOS: brew install pango)\n"
-            "         or build with --html and use your browser's Print -> Save as PDF.",
+            "         or build with --html-only and use your browser's Print -> Save as PDF.",
             file=sys.stderr,
         )
         return False

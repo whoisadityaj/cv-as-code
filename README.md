@@ -119,7 +119,7 @@ photo: me.jpg       # put the photo in input/ (photo themes only)
 page: a4            # a4, letter, legal, single, single-tall, or a CSS size like "210mm 380mm"
 ```
 
-No PDF because Pango won't install? `easy-ai-resume build --html`, open it in a browser, **Print → Save as PDF**.
+No PDF because Pango won't install? `easy-ai-resume build --html-only`, open the HTML file in a browser, **Print → Save as PDF**.
 
 ## ⚙️ More
 
