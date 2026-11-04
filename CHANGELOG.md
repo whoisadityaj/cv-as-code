@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.0 — 2026-11-04
+
+- `init` now puts your files in an `input/` folder, and `build` / `tailor` look there first.
+  Files directly in the folder still work.
+- README: get started in 2 steps. Install with `uv tool install` (no virtual environment to
+  create or activate; uv also sets up Python).
+
 ## 0.7.1 — 2026-11-04
 
 - macOS: finds Pango installed by Homebrew automatically, so no `DYLD_FALLBACK_LIBRARY_PATH`
