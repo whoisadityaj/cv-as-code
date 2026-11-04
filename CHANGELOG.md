@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.11.0 — 2026-11-05
 
 - **`tailor` works with your AI subscription, no API key needed.** It tries Claude Code, then Codex,
   then opencode (whichever is installed and logged in), then an API key, moving on when one fails.
