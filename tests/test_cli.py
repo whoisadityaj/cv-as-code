@@ -75,3 +75,11 @@ def test_tailor_build_with_a_photo_theme(tmp_path, monkeypatch, cv, letter):
             "--letter", str(EXAMPLES / "cover_letter.yaml"), "--out", str(tmp_path), "--provider", "anthropic",
             "--build"]
     assert main(args) == 0  # used to crash: photo not found next to the tailored copy
+
+
+def test_build_accent_option(tmp_path, capsys):
+    args = ["build", str(EXAMPLES / "cv.yaml"), "--out", str(tmp_path), "--html-only", "--theme", "sidebar"]
+    assert main(args + ["--accent", "#9b1b30"]) == 0
+    assert "#9b1b30" in (tmp_path / "Jane_Doe_CV.html").read_text()
+    assert main(args + ["--accent", "red;}"]) == 1
+    assert "accent must be" in capsys.readouterr().err

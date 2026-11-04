@@ -41,7 +41,7 @@ def cmd_build(args: argparse.Namespace) -> int:
         try:
             written = build_file(
                 path, out, page_size=args.page_size, pdf=not args.html_only,
-                theme=args.theme, ats=True if args.ats else None, html=args.html,
+                theme=args.theme, ats=True if args.ats else None, html=args.html, accent=args.accent,
             )
         except (FileNotFoundError, ValueError) as e:
             print(f"error: {e}", file=sys.stderr)
@@ -123,6 +123,7 @@ def main(argv: list[str] | None = None) -> int:
         help=f"Preset ({', '.join(PAGE_PRESETS)}) or a CSS size like '210mm 380mm'.",
     )
     b.add_argument("--theme", choices=theme_names(), help="Override the YAML `theme:` (default: classic).")
+    b.add_argument("--accent", help="Override the YAML `accent:` colour, e.g. '#9b1b30' (each theme has its own default).")
     b.add_argument("--ats", action="store_true", help="Plain single-column output that applicant-tracking systems parse well.")
     html = b.add_mutually_exclusive_group()
     html.add_argument("--html", action="store_true", help="Also write the HTML file (by default only the PDF is written).")

@@ -241,8 +241,9 @@ def render(
     theme: str | None = None,
     ats: bool | None = None,
     base_dir: Path | None = None,
+    accent: str | None = None,
 ) -> str:
-    """Render one document. CLI options (theme, ats) override the YAML settings.
+    """Render one document. CLI options (theme, ats, accent) override the YAML settings.
 
     `base_dir` is where relative paths in the YAML (like `photo:`) are looked up.
     """
@@ -252,7 +253,7 @@ def render(
     layout = "single" if ats else spec.layout
     ctx: dict[str, Any] = {
         "data": data,
-        "css": stylesheet(theme, ats, data.get("accent"), kind),
+        "css": stylesheet(theme, ats, accent or data.get("accent"), kind),
         "page_size": page_size or _page_size_for(data),
         "ats": ats,
         "theme": theme,
@@ -261,6 +262,8 @@ def render(
         "stacked_contacts": layout == "sidebar",
     }
     photo = data.get("photo") if kind == "cv" else (data.get("sender") or {}).get("photo")
+    if str(photo).strip().lower() == "none":  # `photo: none` = no photo, on purpose
+        photo = None
     if photo and spec.photo and not ats:  # photos never go in ATS output
         ctx["photo"] = photo_src(photo, base_dir)
     if kind == "cover_letter":
@@ -276,6 +279,24 @@ def render(
             salutation = f"Dear {manager},"
         ctx["rendered_salutation"] = salutation
     return jinja_env().get_template(TEMPLATE_FOR[kind]).render(**ctx)
+
+
+def missing_photo_note(data: dict[str, Any], kind: str, theme: str | None, ats: bool | None) -> str | None:
+    """A hint when a photo theme is used but the YAML has no `photo:` line at all.
+
+    `photo: none` (or any empty value) means "no photo, on purpose" and stays quiet.
+    """
+    ats = bool(data.get("ats")) if ats is None else ats
+    theme = theme or data.get("theme") or "classic"
+    if ats or theme not in THEMES or not THEMES[theme].photo:
+        return None
+    if kind == "cv" and "photo" not in data:
+        return (f"the {theme} theme shows a photo. Add `photo: me.jpg` to your CV YAML and put me.jpg "
+                "next to it (or `photo: none` to hide this note).")
+    if kind == "cover_letter" and "photo" not in (data.get("sender") or {}):
+        return (f"the {theme} theme shows a photo. Add `photo: me.jpg` under `sender:` in your cover letter "
+                "YAML (or `photo: none` to hide this note).")
+    return None
 
 
 HOMEBREW_LIB_DIRS = ("/opt/homebrew/lib", "/usr/local/lib")
@@ -322,6 +343,7 @@ def build_file(
     theme: str | None = None,
     ats: bool | None = None,
     html: bool = False,
+    accent: str | None = None,
 ) -> list[Path]:
     """Render one YAML file to PDF, plus the HTML only when `html` is set (or `pdf` is off).
 
@@ -329,7 +351,11 @@ def build_file(
     """
     data = load_yaml(path)
     kind = detect_kind(data)
-    page = render(data, kind, page_size=resolve_page_size(page_size), theme=theme, ats=ats, base_dir=path.parent)
+    page = render(data, kind, page_size=resolve_page_size(page_size), theme=theme, ats=ats,
+                  base_dir=path.parent, accent=accent)
+    note = missing_photo_note(data, kind, theme, ats)
+    if note:
+        print(f"note ({path.name}): {note}", file=sys.stderr)
 
     out_dir.mkdir(parents=True, exist_ok=True)
     stem = output_stem(data, kind)

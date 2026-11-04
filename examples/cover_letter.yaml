@@ -13,7 +13,8 @@ sender:
 date: auto
 date_format: "%B %d, %Y"
 
-theme: classic
+theme: classic        # set the same theme and accent as in cv.yaml
+# accent: "#9b1b30"
 page: letter
 
 recipient:

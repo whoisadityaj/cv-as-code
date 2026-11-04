@@ -50,3 +50,16 @@ def test_sidebar_layout_puts_contacts_in_a_list(cv):
     assert 'class="sidebar-layout"' in html
     assert '<ul class="contact-list">' in html
     assert "github.com/example</a>" in html  # full URLs, since there is room
+
+
+def test_photo_theme_without_photo_gives_a_note(cv, letter):
+    from easy_ai_resume.build import missing_photo_note
+
+    del cv["photo"], letter["sender"]["photo"]
+    assert "photo: me.jpg" in missing_photo_note(cv, "cv", "sidebar", None)
+    assert "under `sender:`" in missing_photo_note(letter, "cover_letter", "sidebar", None)
+    assert missing_photo_note(cv, "cv", "classic", None) is None  # theme has no photo
+    assert missing_photo_note(cv, "cv", "sidebar", True) is None  # ATS never shows one
+    cv["photo"] = "none"
+    assert missing_photo_note(cv, "cv", "sidebar", None) is None
+    assert 'class="photo"' not in render(cv, "cv", theme="sidebar", base_dir=EXAMPLES)  # "none" isn't a file
